@@ -47,9 +47,9 @@ This loop is ongoing. “Indefinite drive for knowledge” means a permanent pra
 
 ### Stage 1 — Useful local swarm (current priority)
 
-- [ ] Structured task/result schemas and stable serialization
+- [x] Structured task/result schemas and stable serialization (PR #5; Draft 2020-12 contracts and validation)
 - [ ] Agent capability registry and transparent task routing
-- [ ] First real local-model adapter behind the provider-neutral interface
+- [x] First real local-model adapter behind the provider-neutral interface (PR #4; Ollama-compatible HTTP adapter)
 - [ ] Configurable roles and versioned prompts
 - [ ] Independent verifier/evaluator agent
 - [ ] CLI to submit tasks and inspect traceable results
