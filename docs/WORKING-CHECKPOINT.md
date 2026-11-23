@@ -1,3 +1,15 @@
+# Current integration correction — 2026-11-23
+
+> This addendum supersedes the older live-status snapshot in section 7 below. That snapshot was captured before the final merges and must be treated as historical, not current status.
+
+- **PR #4 — HuffmanMainNode local model adapter:** merged to `main`. The Ollama-compatible local adapter and its tests/docs are integrated.
+- **PR #5 — Ryzean84 protocol contracts:** merged to `main`. Versioned task/result JSON Schemas, fixtures, and validation tests are integrated.
+- The two PRs are complementary foundations: PR #5 defines portable task/result meaning; PR #4 provides a local worker adapter. Neither provides the broker or a networked messaging service.
+- **Issue #6** remains the canonical next implementation work item for the local-only broker/scheduler, admission control, task lifecycle, retries, idempotency, cancellation, fairness, and observability.
+- **Architecture baseline:** [Autonomous Swarm Specification v1](AUTONOMOUS-SWARM-SPECIFICATION-v1.md).
+- **Ecosystem candidates:** [Ecosystem Integration Register](ECOSYSTEM-INTEGRATION-REGISTER.md). OpenWorkSpace, OIX, and Open-Swarm are independently maintained HuffmanMainNode repositories; Mesh Archivist Engine is a Ryzean84-owned fork whose upstream lineage must be confirmed before code reuse. They are candidates/references, not Tushka-integrated code.
+- **Authorship rule:** do not copy or adapt code until the exact source commit, original author notices, upstream lineage, and license obligations are checked. The register records observed repository owners and licenses without inferring individual authorship.
+
 # Tushka Collective — Shared Working Checkpoint
 
 **Checkpoint:** 2026-11-23  
