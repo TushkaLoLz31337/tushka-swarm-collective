@@ -41,6 +41,8 @@ Requires Python 3.11 or newer. From the repository root:
 - [docs/LOCAL-MODEL-ADAPTER.md](docs/LOCAL-MODEL-ADAPTER.md) — local inference configuration and limits
 - [docs/ROADMAP.md](docs/ROADMAP.md) — staged implementation plan
 - [docs/WORKING-CHECKPOINT.md](docs/WORKING-CHECKPOINT.md) — shared status, handoffs, and resume instructions
+- [docs/AUTONOMOUS-SWARM-SPECIFICATION-v1.md](docs/AUTONOMOUS-SWARM-SPECIFICATION-v1.md) — target subsystem boundaries and autonomous collaboration contract
+- [docs/ECOSYSTEM-INTEGRATION-REGISTER.md](docs/ECOSYSTEM-INTEGRATION-REGISTER.md) — companion projects, licenses, authorship, and integration status
 - [CONTRIBUTING.md](CONTRIBUTING.md) — how to participate
 - [SECURITY.md](SECURITY.md) — responsible security reporting
 
