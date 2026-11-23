@@ -8,6 +8,7 @@
 - **Issue #6** remains the canonical next implementation work item for the local-only broker/scheduler, admission control, task lifecycle, retries, idempotency, cancellation, fairness, and observability.
 - **Architecture baseline:** [Autonomous Swarm Specification v1](AUTONOMOUS-SWARM-SPECIFICATION-v1.md).
 - **Ecosystem candidates:** [Ecosystem Integration Register](ECOSYSTEM-INTEGRATION-REGISTER.md). OpenWorkSpace, OIX, and Open-Swarm are independently maintained HuffmanMainNode repositories; Mesh Archivist Engine is a Ryzean84-owned fork whose upstream lineage must be confirmed before code reuse. They are candidates/references, not Tushka-integrated code.
+- **Companion evaluation:** [Issue #10](https://github.com/TushkaLoLz31337/tushka-swarm-collective/issues/10) tracks broker comparison, OIX contract compatibility, OpenWorkSpace interface review, and fork-lineage verification.
 - **Authorship rule:** do not copy or adapt code until the exact source commit, original author notices, upstream lineage, and license obligations are checked. The register records observed repository owners and licenses without inferring individual authorship.
 
 # Tushka Collective — Shared Working Checkpoint
