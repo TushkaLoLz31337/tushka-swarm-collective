@@ -4,7 +4,6 @@ from pathlib import Path
 
 from jsonschema import Draft202012Validator
 
-
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = ROOT / "spec" / "v1"
 MAX_PROMPT_UTF8_BYTES = 65_536
@@ -130,3 +129,4 @@ class ProtocolContractTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
