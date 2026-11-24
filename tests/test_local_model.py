@@ -11,7 +11,9 @@ from tushka.local_model import MAX_PROMPT_BYTES, MAX_RESPONSE_BYTES, LocalModelA
 
 
 class LocalModelHandler(BaseHTTPRequestHandler):
-    response_payload: ClassVar[dict[str, dict[str, str]]] = {"message": {"content": "local answer"}}
+    response_payload: ClassVar[dict[str, dict[str, str]]] = {
+        "message": {"content": "local answer"}
+    }
     raw_response = None
     request_payload = None
     request_path = None
@@ -149,7 +151,9 @@ class LocalModelAgentTests(unittest.TestCase):
 
     def test_rejects_non_finite_timeout(self):
         with self.assertRaises(ValueError):
-            LocalModelAgent("local-one", "test-model", request_timeout_seconds=float("inf"))
+            LocalModelAgent(
+                "local-one", "test-model", request_timeout_seconds=float("inf")
+            )
 
     def test_rejects_empty_identity_or_model(self):
         with self.assertRaises(ValueError):
@@ -160,6 +164,3 @@ class LocalModelAgentTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
-
-
