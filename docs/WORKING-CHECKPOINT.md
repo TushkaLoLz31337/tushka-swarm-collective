@@ -37,7 +37,7 @@ PR #12 is documentation, not a storage engine or enforcement implementation.
 |---|---|---|
 | [#9](https://github.com/TushkaLoLz31337/tushka-swarm-collective/pull/9) | Swarm architecture and ecosystem provenance | Updated against current main; 8 commits ahead and 0 behind. Mergeable, awaiting independent review. |
 | [#13](https://github.com/TushkaLoLz31337/tushka-swarm-collective/pull/13) | Record envelope and lifecycle contracts | Draft. Initial and hardened record-contract CI runs passed; independent review and merge remain. |
-| [#14](https://github.com/TushkaLoLz31337/tushka-swarm-collective/pull/14) | Release quality gates, security scan, and package artifacts | Ready for review. Ruff, Bandit, pip-audit, unit/demo tests, wheel/sdist build, isolated wheel smoke test, checksum artifact upload, and CodeQL all passed on workflow commit 05f95f5; subsequent checkpoint-only doc commit d76d6eb did not alter executable files. Independent review required. |
+| [#14](https://github.com/TushkaLoLz31337/tushka-swarm-collective/pull/14) | Release quality gates, security scan, and package artifacts | Ready for review. Ruff, Bandit, pip-audit, unit/demo tests, wheel/sdist build, isolated wheel smoke test, checksum artifact upload, and CodeQL all passed on workflow commit 05f95f5; subsequent checkpoint-only documentation commits did not alter executable files. Independent review required. |
 
 Do not merge a PR solely because its author reviewed it. At least one independent review is required for architecture/security-sensitive changes.
 
