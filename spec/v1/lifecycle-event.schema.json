@@ -1,12 +1,12 @@
 {
   "$schema":"https://json-schema.org/draft/2020-12/schema",
-  "$id":"https://tushka-swarm-collective.example/spec/v1/lifecycle-event.schema.json",
+  "$id":"urn:tushka:spec:v1:lifecycle-event",
   "title":"Tushka record lifecycle event",
   "description":"Payload-free metadata event. Never store prompts, secrets, or free-form personal data here.",
   "type":"object","additionalProperties":false,
   "required":["event_id","record_id","schema_version","event_type","occurred_at","actor"],
   "properties":{
-    "event_id":{"type":"string","format":"uuid","pattern":"^[0-9a-fA-F-]{36}$"},
+    "event_id":{"type":"string","format":"uuid","pattern":"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"},
     "record_id":{"type":"string","format":"uuid","pattern":"^[0-9a-fA-F-]{36}$"},
     "schema_version":{"const":"1.0"},
     "event_type":{"enum":["created","validated","reviewed","superseded","corrected","tombstoned","payload_deleted","retention_expired","exported"]},
