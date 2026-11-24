@@ -35,7 +35,7 @@ PR #12 is documentation, not a storage engine or enforcement implementation.
 
 | PR | Work | Current status / next action |
 |---|---|---|
-| [#9](https://github.com/TushkaLoLz31337/tushka-swarm-collective/pull/9) | Swarm architecture and ecosystem provenance | 7 commits ahead and 6 behind main; branch diverged after PR #12. Rebase/update and obtain independent review before merge. |
+| [#9](https://github.com/TushkaLoLz31337/tushka-swarm-collective/pull/9) | Swarm architecture and ecosystem provenance | Updated against current main; 8 commits ahead and 0 behind. Mergeable, awaiting independent review. |
 | [#13](https://github.com/TushkaLoLz31337/tushka-swarm-collective/pull/13) | Record envelope and lifecycle contracts | Draft. Initial and hardened record-contract CI runs passed; independent review and merge remain. |
 | [#14](https://github.com/TushkaLoLz31337/tushka-swarm-collective/pull/14) | Release quality gates, security scan, and package artifacts | Draft. CI/security/package checks must complete before it can be considered ready. |
 
