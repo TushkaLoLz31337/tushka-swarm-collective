@@ -1,12 +1,12 @@
 {
   "$schema":"https://json-schema.org/draft/2020-12/schema",
-  "$id":"https://tushka-swarm-collective.example/spec/v1/record-envelope.schema.json",
+  "$id":"urn:tushka:spec:v1:record-envelope",
   "title":"Tushka governed record envelope",
   "description":"Metadata only; payload bytes remain behind content_ref.",
   "type":"object","additionalProperties":false,
   "required":["record_id","record_type","schema_version","created_at","creator","origin","purpose","classification","license","retention_class","content_ref","review_state","tags","relationships"],
   "properties":{
-    "record_id":{"type":"string","format":"uuid","pattern":"^[0-9a-fA-F-]{36}$"},
+    "record_id":{"type":"string","format":"uuid","pattern":"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"},
     "record_type":{"enum":["task","decision","source","artifact","checkpoint","conversation_summary","experiment","policy","use_case"]},
     "schema_version":{"const":"1.0"},
     "created_at":{"type":"string","format":"date-time"},
