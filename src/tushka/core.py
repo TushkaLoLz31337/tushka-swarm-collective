@@ -128,5 +128,3 @@ class Coordinator:
                 f"- {r.agent_name}: {r.error or 'unsuccessful'}" for r in failed
             )
         return "\n\n".join(sections)
-
-
