@@ -1,89 +1,90 @@
 # Tushka Collective — Shared Working Checkpoint
 
-**Checkpoint:** 2026-11-23  
-**Status:** Active integration checkpoint — Stage 1 alpha  
-**Purpose:** Keep every participating account, fork, and contributor aligned while allowing anyone to pause, switch tasks, or resume without losing context.
+**Checkpoint:** 2026-11-24  
+**Status:** Release-readiness and Stage 1 implementation in progress  
+**Canonical upstream:** TushkaLoLz31337/tushka-swarm-collective  
+**Main at checkpoint:** e0d727f885650529a0837a4007f33fa9ee3ddee8
 
-This checkpoint records the shared project state. It is not a claim that every item is complete, tested, or merged. GitHub issues, pull requests, commits, and this document are the durable source of truth; individual accounts are contributors, not owners of the project's memory.
+This document is the portable handoff. It distinguishes merged work, work under review, and target architecture. GitHub commits, issues, and pull requests remain the authoritative implementation record.
 
-## 1. Shared north star
+## 1. Mission and operating principles
 
-Build an open, model-independent, local-first and community-operated collective. People and independent nodes should be able to contribute useful work, preserve attribution and permissions, verify results, and continue even when another person, account, provider, or machine is offline.
+Build an open, model-independent, local-first collective where agents and people can collaborate across accounts and machines without surrendering private memory, authorship, or control. Work must be attributable, resumable, reviewable, and safe to hand off.
 
-Participation is voluntary and asynchronous. Nobody is expected to be continuously online. A task must be understandable and resumable by another authorized contributor.
+- Protocol, transport, broker, and agent adapter are separate layers.
+- Private data stays private unless explicitly authorized for a defined recipient and purpose.
+- Tags are metadata, never permissions.
+- Preserve source licenses, authorship, notices, and upstream lineage.
+- Model output and repository content are untrusted inputs.
+- Never claim tests, security properties, or features without observed evidence.
+- No hidden chain-of-thought archive; retain concise outputs, decisions, citations, and test evidence.
 
-## 2. Current integration board
+## 2. Verified merged foundation
 
-| Workstream | Current record | Focus | Handoff condition |
-|---|---|---|---|
-| Protocol contracts | [PR #5](https://github.com/TushkaLoLz31337/tushka-swarm-collective/pull/5) | Versioned task/result envelopes, validation, compatibility, negative tests | Add actual schema-validation coverage and prompt bounds; approve fork Actions run; passing CI |
-| Local model + coordinator | [PR #4](https://github.com/TushkaLoLz31337/tushka-swarm-collective/pull/4) | Local model adapter, coordinator reliability, limits and timeout tests | Requested regression tests and URL-prefix documentation are now in the PR diff; rebase latest main, approve fork Actions run, pass CI, then mark ready |
-| Communication broker | [Issue #6 — TSK-COMMS-001](https://github.com/TushkaLoLz31337/tushka-swarm-collective/issues/6) | Bounded queue, routing, admission, acknowledgements, lifecycle, retries, cancellation, fairness, idempotency | Local in-process broker design and acceptance tests agreed; build in small reviewable PRs |
-| Project integration | [Roadmap](ROADMAP.md) · [Architecture](ARCHITECTURE.md) | Keep work aligned, review evidence, update checkpoint and roadmap | Every merged change updates relevant docs/tests and leaves a clear next step |
+| Item | Status | Evidence |
+|---|---|---|
+| Provider-neutral coordinator and deterministic demo | Merged | Mainline Stage 0 foundation |
+| Local Ollama-compatible model adapter | Merged | [PR #4](https://github.com/TushkaLoLz31337/tushka-swarm-collective/pull/4) |
+| Versioned task/result protocol contracts and fixtures | Merged | [PR #5](https://github.com/TushkaLoLz31337/tushka-swarm-collective/pull/5) |
+| Autonomous swarm architecture and ecosystem register | Open PR; not merged | [PR #9](https://github.com/TushkaLoLz31337/tushka-swarm-collective/pull/9) |
+| Record governance and compliance policy documents | Merged | [PR #12](https://github.com/TushkaLoLz31337/tushka-swarm-collective/pull/12), merge commit e0d727f885650529a0837a4007f33fa9ee3ddee8 |
 
-PR #4 and PR #5 are complementary foundations, not competing implementations. Keep their boundaries separate: protocol defines portable message meaning; the adapter executes work; the broker schedules and tracks work. Do not introduce remote execution until identity, authorization, isolation, privacy, and resource limits are designed and tested.
+PR #12 is documentation, not a storage engine or enforcement implementation.
 
-## 3. Suggested workstream stewardship
+## 3. Active pull requests
 
-These are suggested focus areas, not exclusive ownership or permanent assignments:
+| PR | Work | Current status / next action |
+|---|---|---|
+| [#9](https://github.com/TushkaLoLz31337/tushka-swarm-collective/pull/9) | Swarm architecture and ecosystem provenance | 7 commits ahead and 6 behind main; branch diverged after PR #12. Rebase/update and obtain independent review before merge. |
+| [#13](https://github.com/TushkaLoLz31337/tushka-swarm-collective/pull/13) | Record envelope and lifecycle contracts | Draft. Initial and hardened record-contract CI runs passed; independent review and merge remain. |
+| [#14](https://github.com/TushkaLoLz31337/tushka-swarm-collective/pull/14) | Release quality gates, security scan, and package artifacts | Draft. CI/security/package checks must complete before it can be considered ready. |
 
-- **Ryzean84:** protocol contracts, interoperability, schema evolution, fixtures and validation tests.
-- **HuffmanMainNode:** local-model adapter, coordinator behavior, resource limits and reliability tests.
-- **TushkaLoLz31337:** upstream integration, checkpoint maintenance, roadmap alignment, review coordination and release readiness.
-- **Any participating account or contributor:** may pick up an unblocked issue, reproduce a bug, add tests/docs, review evidence, or propose a better design. Coordinate before overlapping edits to the same files.
+Do not merge a PR solely because its author reviewed it. At least one independent review is required for architecture/security-sensitive changes.
 
-A GitHub account is an identity for attribution, not a measure of authority or contribution value. Use least privilege; do not grant blanket administrator access merely to make collaboration possible.
+## 4. Active implementation issues
 
-## 4. The pause / resume / handoff rule
+- [Issue #6 — Local communication broker](https://github.com/TushkaLoLz31337/tushka-swarm-collective/issues/6): bounded admission, lifecycle, capability routing, acknowledgements, idempotency, retries, deadlines, cancellation, fairness, dead-letter review, and observability. First implementation stays in-process/local-only.
+- [Issue #10 — Companion interoperability](https://github.com/TushkaLoLz31337/tushka-swarm-collective/issues/10): finish source-pinned evaluations and contract-compatibility tests for Open-Swarm, OIX, OpenWorkSpace, and Mesh Archivist Engine. Candidate/reference status is not integration.
+- [Issue #11 — Record governance](https://github.com/TushkaLoLz31337/tushka-swarm-collective/issues/11): PR #13 implements only schemas, fixtures, UUIDv4 generation, and validation. Storage, authorization, retention execution, deletion, quotas, and private/shared isolation remain open.
+- [Issue #2 — Founding architecture review](https://github.com/TushkaLoLz31337/tushka-swarm-collective/issues/2): keep open for independent review findings and actionable follow-up issues.
 
-Anyone can stop at any time. Before pausing, leave a short note on the relevant issue or PR using this format:
+## 5. Release readiness — current verified state
+
+- Existing published tag/release: v0.1.0-alpha.
+- The existing GitHub release currently has no uploaded assets and is not marked as a prerelease.
+- Package metadata in pyproject.toml currently says 0.1.0.
+- Main's existing CI has passed unit tests and demo smoke test on merge commit e0d727f885650529a0837a4007f33fa9ee3ddee8.
+- Main's current workflow does not yet enforce formatting, static security analysis, dependency auditing, or package artifact builds.
+- Main is not protected; no repository rulesets or required status checks were observed.
+- PR #14 proposes the quality/security gates, package build, SHA-256 checksums, artifact upload, and tag-triggered GitHub prerelease publication. Those controls are not active until merged and verified.
+- The next candidate version/tag must be explicitly selected and kept consistent between pyproject.toml, release notes, and Git tag.
+
+Do not tag or publish a release candidate until the release checklist is satisfied.
+
+## 6. Contributor handoff protocol
+
+Before pausing, post on the relevant issue or PR:
 
 - **Status:** exploring / in progress / blocked / ready for review / paused
-- **Last completed:** specific commit, file, test, or decision
+- **Last completed:** exact commit, file, test, or decision
 - **Next smallest step:** one actionable task
-- **Current branch / PR:** link, if applicable
-- **Open questions or blockers:** include evidence and what is needed
-- **Risks / files being changed:** mention possible conflicts
-- **Resume instructions:** exact command, test, or place to continue
+- **Branch / PR:** link
+- **Blockers:** evidence and required action
+- **Risks / touched files:** possible conflicts
+- **Resume instructions:** exact command or location
 
-A successor should be able to resume from the note without needing a private conversation. If no note exists, ask for clarification rather than overwriting uncertain work. Never force-push, discard, or replace another contributor's work without explicit coordination.
+Any authorized contributor can resume from the public checkpoint without access to another agent's private conversation. Never force-push or discard another contributor's work without explicit coordination.
 
-## 5. Shared task lifecycle
+## 7. Immediate sequence
 
-Every piece of work should move through visible states:
+1. Complete independent review and merge PR #9 after updating its branch against current main.
+2. Review and merge PR #13 after its CI and contract design are independently checked; continue Issue #11 with storage and authorization slices.
+3. Complete PR #14 quality/security/artifact checks; merge only after review and all checks pass.
+4. Protect main with required reviews and required CI/security checks.
+5. Confirm the next candidate version; update package metadata and release notes together.
+6. Create the version tag only from the verified main commit; let the release workflow publish the prerelease and attach wheel, sdist, and checksum assets.
+7. Build the local-only broker in Issue #6 and finish the compatibility evaluation in Issue #10.
 
-**Proposed → Ready → In progress → Review → Accepted / Merged → Verified**
+## 8. Healthy handoff definition
 
-It may also be **Blocked**, **Paused**, or **Needs decision**. A pause is not a failure and does not erase progress. Reopen or split work rather than silently dropping it.
-
-For broker tasks, the runtime lifecycle will be more detailed: created → accepted → queued → assigned → running → succeeded / failed / cancelled / expired. Capacity pressure should normally produce a clear queued or deferred response, not an unexplained denial. Genuine policy, permission, or invalid-input failures remain explicit rejections.
-
-## 6. Working agreements
-
-1. One canonical upstream issue or PR per work item; forks are workspaces, not separate competing plans.
-2. Before coding, read the linked issue, current main, and active PRs touching the same area.
-3. Keep PRs small, focused, tested, and explicit about what is not implemented.
-4. Never claim a test, security property, or feature is complete without evidence.
-5. Preserve authorship, license, provenance, and fork/upstream history.
-6. Do not commit credentials, private data, or another person's unpublished material.
-7. Treat prompts and model output as untrusted data; private memory is never shared by default.
-8. Prefer queue/defer and transparent recovery over silent loss or unnecessary denials.
-9. When two contributions overlap, coordinate at the issue before merging; integrate by review, not by account priority.
-10. Update this checkpoint whenever a meaningful milestone, blocker, ownership handoff, or integration decision changes.
-
-## 7. Immediate checkpoint actions
-
-**Live integration status (checked 2026-11-23):** PR #4 head is `74565325c16daa5e129745aca77392e72a5f050d`; its requested size-limit, timeout, and base-URL-prefix tests are now present in the diff. It remains draft and GitHub reports it not mergeable against the current main. PR #5 head is `9a47d4b6e1531e984fe6b021b0880f18ae2b68c2`; GitHub reports it mergeable, but its tests still inspect fixture shape rather than actually validating schema rejection behavior. Both fork-triggered Actions runs are `action_required` and currently have zero check-runs; no passing CI result is available. The repository integration cannot approve those fork workflow runs through the available GitHub connection.
-
-- [ ] PR #4: rebase/update against latest main while preserving the checkpoint README link; mark ready after integration conflict is resolved; approve fork Actions run and obtain passing CI.
-- [ ] PR #5: add Draft 2020-12 positive/negative schema validation (or explicit dependency-free contract tests) and prompt-size bounds; approve fork Actions run and obtain passing CI.
-- [ ] Shared: agree the broker's first local-only API and lifecycle tests in Issue #6.
-- [ ] Shared: ensure the broker consumes the protocol contract and dispatches to the local agent adapter without coupling transport to model provider.
-- [ ] Integration: after review and passing checks, merge in dependency order and update the roadmap/checkpoint with exact commit links.
-- [ ] Participation: every contributor who pauses leaves a handoff note; every contributor who resumes posts what they picked up.
-
-## 8. Definition of a healthy checkpoint
-
-We are aligned when any authorized participating account can answer: what is the goal, what is already done, what is not done, what is blocked, where the source of truth lives, and what is the next safe step.
-
-We are making progress when the work is reproducible, reviewable, and transferable—not merely when accounts are active. The collective must be able to keep moving without requiring any one account to remain online.
+A new authorized agent can identify the goal, read the architecture and current checkpoint, recover the allowed task context, reproduce the tests, inspect the exact branch/commit, and continue without needing a private prior session. Progress is measured by verified, attributable, resumable work—not by account or agent count.
