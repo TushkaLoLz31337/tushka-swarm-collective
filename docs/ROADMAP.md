@@ -47,9 +47,9 @@ This loop is ongoing. “Indefinite drive for knowledge” means a permanent pra
 
 ### Stage 1 — Useful local swarm (current priority)
 
-- [ ] Structured task/result schemas and stable serialization
+- [x] Structured task/result schemas and stable serialization (PR #5; schema contracts and fixtures merged)
 - [ ] Agent capability registry and transparent task routing
-- [ ] First real local-model adapter behind the provider-neutral interface
+- [x] First real local-model adapter behind the provider-neutral interface (PR #4; Ollama-compatible local adapter merged)
 - [ ] Configurable roles and versioned prompts
 - [ ] Independent verifier/evaluator agent
 - [ ] CLI to submit tasks and inspect traceable results
@@ -132,6 +132,7 @@ Do not treat raw account, fork, star, agent, or dataset counts as proof of intel
 
 ## Current first milestone
 
-A developer can clone the repository, run the tests, execute the demo, and observe separately identified agents responding to the same task. The next concrete build is the first real local-model adapter, tracked in [Issue #1](https://github.com/TushkaLoLz31337/tushka-swarm-collective/issues/1).
+A developer can clone the repository, run the tests, execute the demo, and use the provider-neutral interface with the merged local-model adapter. The next runtime milestone is the bounded local-only broker in [Issue #6](https://github.com/TushkaLoLz31337/tushka-swarm-collective/issues/6). The first record-envelope and lifecycle-event contract implementation is under review in [PR #13](https://github.com/TushkaLoLz31337/tushka-swarm-collective/pull/13); persistence and enforcement remain unimplemented.
 
 This roadmap is living: propose changes through issues or pull requests. Explain the reason, evidence, risks, and migration impact. A proposal becomes project direction only after public review and maintainer acceptance.
+
