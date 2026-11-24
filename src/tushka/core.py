@@ -8,8 +8,8 @@ from __future__ import annotations
 
 import asyncio
 import math
-from dataclasses import dataclass
 from collections.abc import Sequence
+from dataclasses import dataclass
 from typing import Protocol
 
 
@@ -128,4 +128,5 @@ class Coordinator:
                 f"- {r.agent_name}: {r.error or 'unsuccessful'}" for r in failed
             )
         return "\n\n".join(sections)
+
 
