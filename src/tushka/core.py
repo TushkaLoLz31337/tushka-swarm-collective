@@ -9,7 +9,8 @@ from __future__ import annotations
 import asyncio
 import math
 from dataclasses import dataclass
-from typing import Protocol, Sequence
+from collections.abc import Sequence
+from typing import Protocol
 
 
 @dataclass(frozen=True, slots=True)
@@ -89,14 +90,14 @@ class Coordinator:
                         error="Agent identity mismatch in returned result.",
                     )
                 return result
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 return AgentResult(
                     agent_name=agent.name,
                     content="",
                     success=False,
                     error=f"Timed out after {self.timeout_seconds:g} seconds.",
                 )
-            except Exception as exc:  # isolate a failed participant without leaking details
+            except Exception as exc:  # noqa: BLE001 - isolate arbitrary agent failures without leaking details
                 return AgentResult(
                     agent_name=agent.name,
                     content="",
@@ -127,3 +128,4 @@ class Coordinator:
                 f"- {r.agent_name}: {r.error or 'unsuccessful'}" for r in failed
             )
         return "\n\n".join(sections)
+
