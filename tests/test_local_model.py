@@ -3,8 +3,8 @@ import json
 import threading
 import time
 import unittest
-from typing import ClassVar
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from typing import ClassVar
 
 from tushka.core import Task
 from tushka.local_model import MAX_PROMPT_BYTES, MAX_RESPONSE_BYTES, LocalModelAgent
@@ -160,5 +160,6 @@ class LocalModelAgentTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
 
 
