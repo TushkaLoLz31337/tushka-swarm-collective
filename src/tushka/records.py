@@ -106,7 +106,7 @@ def validate_record(record: Mapping[str, Any]) -> None:
     for tag in tags:
         _object(tag, "tag", {"key", "value"}, {"key", "value"})
         key, value = tag["key"], tag["value"]
-        if key not in TAG_VALUES or not isinstance(value, str) or value not in TAG_VALUES[key]:
+        if not isinstance(key, str) or key not in TAG_VALUES or not isinstance(value, str) or value not in TAG_VALUES[key]:
             raise ValueError("tag key/value is not in the controlled vocabulary")
         if (key, value) in seen:
             raise ValueError("duplicate tag")
@@ -168,3 +168,4 @@ def create_lifecycle_event(*, record_id: str, event_type: str, actor: Mapping[st
         event["related_record_id"] = related_record_id
     validate_lifecycle_event(event)
     return event
+
