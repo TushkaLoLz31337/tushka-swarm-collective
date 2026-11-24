@@ -1,0 +1,31 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://tushka-swarm-collective.example/spec/v1/record-envelope.schema.json",
+  "title":"Tushka governed record envelope",
+  "description":"Metadata only; payload bytes remain behind content_ref.",
+  "type":"object","additionalProperties":false,
+  "required":["record_id","record_type","schema_version","created_at","creator","origin","purpose","classification","license","retention_class","content_ref","review_state","tags","relationships"],
+  "properties":{
+    "record_id":{"type":"string","format":"uuid","pattern":"^[0-9a-fA-F-]{36}$"},
+    "record_type":{"enum":["task","decision","source","artifact","checkpoint","conversation_summary","experiment","policy","use_case"]},
+    "schema_version":{"const":"1.0"},
+    "created_at":{"type":"string","format":"date-time"},
+    "creator":{"type":"object","additionalProperties":false,"required":["actor_type"],"properties":{"actor_type":{"enum":["human","agent","node","service"]},"identifier":{"type":"string","minLength":1,"maxLength":128}}},
+    "origin":{"type":"object","additionalProperties":false,"required":["origin_type"],"properties":{"origin_type":{"enum":["local","repository","url","generated"]},"uri":{"type":"string","minLength":1,"maxLength":2048},"revision":{"type":"string","minLength":1,"maxLength":256}}},
+    "purpose":{"enum":["orchestration","continuity","research","build","audit","governance","interoperability"]},
+    "classification":{"enum":["public","community","private","confidential","restricted"]},
+    "license":{"type":"string","minLength":1,"maxLength":128},
+    "retention_class":{"enum":["ephemeral","task","project","provenance","security","legal_hold"]},
+    "content_ref":{"type":"string","minLength":1,"maxLength":2048},
+    "content_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},
+    "review_state":{"enum":["unreviewed","reviewed","verified","disputed","superseded","withdrawn"]},
+    "tags":{"type":"array","maxItems":32,"uniqueItems":true,"items":{"oneOf":[
+      {"type":"object","additionalProperties":false,"required":["key","value"],"properties":{"key":{"const":"type"},"value":{"enum":["task","decision","source","artifact","checkpoint","conversation_summary","experiment","policy","use_case"]}}},
+      {"type":"object","additionalProperties":false,"required":["key","value"],"properties":{"key":{"const":"domain"},"value":{"enum":["orchestration","continuity","security","protocol","governance","research","build","integration"]}}},
+      {"type":"object","additionalProperties":false,"required":["key","value"],"properties":{"key":{"const":"state"},"value":{"enum":["proposed","verified","disputed"]}}},
+      {"type":"object","additionalProperties":false,"required":["key","value"],"properties":{"key":{"const":"scope"},"value":{"enum":["private","community","public"]}}},
+      {"type":"object","additionalProperties":false,"required":["key","value"],"properties":{"key":{"const":"retention"},"value":{"enum":["ephemeral","project","provenance","security","legal_hold"]}}}
+    ]}},
+    "relationships":{"type":"array","maxItems":64,"items":{"type":"object","additionalProperties":false,"required":["relationship_type","target_record_id"],"properties":{"relationship_type":{"enum":["derived_from","cites","corrects","supersedes","replies_to","attached_to"]},"target_record_id":{"type":"string","format":"uuid","pattern":"^[0-9a-fA-F-]{36}$"}}}}
+  }
+}
