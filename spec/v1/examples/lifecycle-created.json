@@ -1,0 +1,7 @@
+{
+  "event_id":"c1c2d3e4-f5a6-47b8-9012-3456789abcde",
+  "record_id":"b1c2d3e4-f5a6-47b8-9012-3456789abcde",
+  "schema_version":"1.0","event_type":"created","occurred_at":"2026-11-24T19:00:00Z",
+  "actor":{"actor_type":"agent","identifier":"architecture-reviewer"},
+  "reason_code":"initial_record"
+}
