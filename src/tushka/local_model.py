@@ -12,12 +12,19 @@ import json
 import math
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlsplit
-from urllib.request import Request, urlopen
+from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 from .core import AgentResult, Task
 
 MAX_PROMPT_BYTES = 1024 * 1024
 MAX_RESPONSE_BYTES = 4 * 1024 * 1024
+
+
+class _NoRedirectHandler(HTTPRedirectHandler):
+    """Keep configured local endpoints from redirecting prompts elsewhere."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
 
 
 class LocalModelAgent:
@@ -89,7 +96,8 @@ class LocalModelAgent:
         )
 
         try:
-            with urlopen(request, timeout=self.request_timeout_seconds) as response:
+            opener = build_opener(_NoRedirectHandler)
+            with opener.open(request, timeout=self.request_timeout_seconds) as response:
                 raw = response.read(MAX_RESPONSE_BYTES + 1)
         except HTTPError as exc:
             raise RuntimeError(f"Local model endpoint returned HTTP {exc.code}.") from None
@@ -116,3 +124,4 @@ class LocalModelAgent:
         if not isinstance(content, str) or not content.strip():
             raise RuntimeError("Local model endpoint returned no usable message content.")
         return content.strip()
+
