@@ -45,17 +45,16 @@ class LocalModelAgent:
             raise ValueError("Agent name must not be empty.")
         if not isinstance(model, str) or not model.strip():
             raise ValueError("Model name must not be empty.")
-        if (
-            not math.isfinite(request_timeout_seconds)
-            or request_timeout_seconds <= 0
-        ):
+        if not math.isfinite(request_timeout_seconds) or request_timeout_seconds <= 0:
             raise ValueError("request_timeout_seconds must be finite and positive.")
 
         parsed = urlsplit(base_url)
         if parsed.scheme not in {"http", "https"} or not parsed.hostname:
             raise ValueError("base_url must be an absolute HTTP or HTTPS URL.")
         if parsed.username or parsed.password or parsed.query or parsed.fragment:
-            raise ValueError("base_url must not contain credentials, query, or fragment.")
+            raise ValueError(
+                "base_url must not contain credentials, query, or fragment."
+            )
 
         hostname = parsed.hostname.rstrip(".").lower()
         try:
@@ -100,7 +99,9 @@ class LocalModelAgent:
             with opener.open(request, timeout=self.request_timeout_seconds) as response:
                 raw = response.read(MAX_RESPONSE_BYTES + 1)
         except HTTPError as exc:
-            raise RuntimeError(f"Local model endpoint returned HTTP {exc.code}.") from None
+            raise RuntimeError(
+                f"Local model endpoint returned HTTP {exc.code}."
+            ) from None
         except URLError as exc:
             reason_type = type(exc.reason).__name__
             raise RuntimeError(
@@ -122,8 +123,7 @@ class LocalModelAgent:
         message = response_data.get("message")
         content = message.get("content") if isinstance(message, dict) else None
         if not isinstance(content, str) or not content.strip():
-            raise RuntimeError("Local model endpoint returned no usable message content.")
+            raise RuntimeError(
+                "Local model endpoint returned no usable message content."
+            )
         return content.strip()
-
-
-
