@@ -15,9 +15,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.11"
       - name: Install project and pinned CI dependencies
@@ -42,9 +42,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.11"
       - name: Build source and wheel distributions
@@ -58,7 +58,7 @@ jobs:
       - name: Generate SHA-256 checksums
         run: sha256sum dist/* > SHA256SUMS
       - name: Upload release-ready artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: tushka-distributions
           path: |
@@ -75,7 +75,7 @@ jobs:
       contents: write
     steps:
       - name: Download verified package artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: tushka-distributions
           path: release-assets
@@ -88,4 +88,5 @@ jobs:
             --title "$GITHUB_REF_NAME" \
             --generate-notes \
             --prerelease
+
 
