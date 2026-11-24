@@ -3,14 +3,15 @@ import json
 import threading
 import time
 import unittest
+from typing import ClassVar
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 from tushka.core import Task
-from tushka.local_model import LocalModelAgent, MAX_PROMPT_BYTES, MAX_RESPONSE_BYTES
+from tushka.local_model import MAX_PROMPT_BYTES, MAX_RESPONSE_BYTES, LocalModelAgent
 
 
 class LocalModelHandler(BaseHTTPRequestHandler):
-    response_payload = {"message": {"content": "local answer"}}
+    response_payload: ClassVar[dict[str, dict[str, str]]] = {"message": {"content": "local answer"}}
     raw_response = None
     request_payload = None
     request_path = None
@@ -159,4 +160,5 @@ class LocalModelAgentTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
 
