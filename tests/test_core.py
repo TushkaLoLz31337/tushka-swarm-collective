@@ -20,19 +20,23 @@ class StubAgent:
 
 class CoordinatorTests(unittest.TestCase):
     def test_collects_multiple_agents(self):
-        coordinator = Coordinator([
-            StubAgent("alpha", "first"),
-            StubAgent("beta", "second"),
-        ])
+        coordinator = Coordinator(
+            [
+                StubAgent("alpha", "first"),
+                StubAgent("beta", "second"),
+            ]
+        )
         results = asyncio.run(coordinator.run(Task("t1", "hello")))
         self.assertEqual([r.agent_name for r in results], ["alpha", "beta"])
         self.assertTrue(all(r.success for r in results))
 
     def test_isolates_agent_failure_without_exposing_exception_text(self):
-        coordinator = Coordinator([
-            StubAgent("working", "usable answer"),
-            StubAgent("broken", error="secret-token-must-not-appear"),
-        ])
+        coordinator = Coordinator(
+            [
+                StubAgent("working", "usable answer"),
+                StubAgent("broken", error="secret-token-must-not-appear"),
+            ]
+        )
         results = asyncio.run(coordinator.run(Task("t2", "hello")))
         self.assertTrue(results[0].success)
         self.assertFalse(results[1].success)
@@ -43,10 +47,12 @@ class CoordinatorTests(unittest.TestCase):
 
     def test_synthesis_rejects_no_usable_results(self):
         with self.assertRaises(RuntimeError):
-            Coordinator.synthesize([
-                AgentResult("empty", "", success=True),
-                AgentResult("failed", "", success=False, error="offline"),
-            ])
+            Coordinator.synthesize(
+                [
+                    AgentResult("empty", "", success=True),
+                    AgentResult("failed", "", success=False, error="offline"),
+                ]
+            )
 
     def test_requires_agents(self):
         with self.assertRaises(ValueError):
