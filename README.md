@@ -43,6 +43,8 @@ Requires Python 3.11 or newer. From the repository root:
 - [docs/LOCAL-MODEL-ADAPTER.md](docs/LOCAL-MODEL-ADAPTER.md) — local inference configuration and limits
 - [docs/ROADMAP.md](docs/ROADMAP.md) — staged implementation plan
 - [docs/WORKING-CHECKPOINT.md](docs/WORKING-CHECKPOINT.md) — shared status, handoffs, and resume instructions
+- [docs/AUTONOMOUS-SWARM-SPECIFICATION-v1.md](docs/AUTONOMOUS-SWARM-SPECIFICATION-v1.md) — target subsystem boundaries and agent handoff contract
+- [docs/ECOSYSTEM-INTEGRATION-REGISTER.md](docs/ECOSYSTEM-INTEGRATION-REGISTER.md) — companion projects, licenses, authorship, and integration status
 - [docs/RECORD-GOVERNANCE.md](docs/RECORD-GOVERNANCE.md) — immutable provenance, identifiers, tags, directional paths, retention, and storage-bloat controls (proposed)
 - [docs/COMPLIANCE-AND-USE-POLICY.md](docs/COMPLIANCE-AND-USE-POLICY.md) — project-wide legal, privacy, security, platform, and license guardrails (proposed)
 - [docs/USE-CASE-REGISTER.md](docs/USE-CASE-REGISTER.md) — mandatory per-use-case assessment template and initial register
