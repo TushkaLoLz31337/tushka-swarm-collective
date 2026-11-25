@@ -4,7 +4,7 @@ This checklist is a hard gate for every release candidate. A tag must point to t
 
 ## Before tagging
 
-- [ ] Confirm the target version and release channel; match pyproject.toml, release notes, and tag.
+- [ ] Confirm the target version and release channel; match pyproject.toml, release notes, and tag. For a PEP 440 candidate such as `0.2.0rc1`, use the matching tag `v0.2.0-rc.1`.
 - [ ] Review and merge all intended PRs; no unreviewed or conflicted work is included.
 - [ ] Ensure main is protected with required independent review and required CI/security checks, including dependency review.
 - [ ] Run Ruff lint and format checks.
@@ -20,7 +20,7 @@ This checklist is a hard gate for every release candidate. A tag must point to t
 
 ## Tag and publish
 
-- [ ] Create the tag from the verified main commit only.
+- [ ] Create the tag from the verified main commit only. The release workflow independently verifies that the tagged commit is an ancestor of `main` and that the tag matches the package version.
 - [ ] Confirm the tag-triggered workflow passes all required jobs.
 - [ ] Confirm the GitHub prerelease contains the wheel, source archive, and SHA256SUMS.
 - [ ] Verify downloaded checksums against the published assets.
