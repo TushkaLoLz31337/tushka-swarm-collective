@@ -187,6 +187,7 @@ class LocalBroker:
         self._records: OrderedDict[str, _TaskRecord] = OrderedDict()
         self._idempotency: dict[str, str] = {}
         self._queued_count = 0
+        self._queued_ids: set[str] = set()
         self._active_counts = {worker.agent.name: 0 for worker in self._workers}
         self._worker_tasks: list[asyncio.Task[None]] = []
         self._execution_tasks: dict[str, asyncio.Task[None]] = {}
@@ -330,6 +331,7 @@ class LocalBroker:
         self._transition(record, TaskState.QUEUED)
         self._queues[worker.agent.name].put_nowait(task.task_id)
         self._queued_count += 1
+        self._queued_ids.add(task.task_id)
         if idempotency_key is not None:
             self._idempotency[idempotency_key] = task.task_id
         return AdmissionResult(AdmissionStatus.ACCEPTED, task.task_id)
@@ -380,6 +382,7 @@ class LocalBroker:
         while not self._closed:
             task_id = await queue.get()
             self._queued_count -= 1
+            self._queued_ids.discard(task_id)
             record = self._records.get(task_id)
             if record is None or record.state in _TERMINAL_STATES:
                 queue.task_done()
@@ -486,7 +489,7 @@ class LocalBroker:
                 (
                     task_id
                     for task_id, record in self._records.items()
-                    if record.state in _TERMINAL_STATES
+                    if record.state in _TERMINAL_STATES and task_id not in self._queued_ids
                 ),
                 None,
             )
