@@ -90,7 +90,7 @@ jobs:
           from pathlib import Path
 
           version = tomllib.loads(Path("pyproject.toml").read_text())["project"]["version"]
-          match = re.fullmatch(r"(\\d+(?:\\.\\d+)*)rc(\\d+)", version)
+          match = re.fullmatch(r"(\d+(?:\.\d+)*)rc(\d+)", version)
           if not match:
               raise SystemExit(f"Expected a PEP 440 release-candidate version, got {version!r}")
           expected_tag = f"v{match.group(1)}-rc.{match.group(2)}"
