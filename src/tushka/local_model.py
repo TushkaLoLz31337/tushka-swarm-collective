@@ -12,12 +12,19 @@ import json
 import math
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlsplit
-from urllib.request import Request, urlopen
+from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 from .core import AgentResult, Task
 
 MAX_PROMPT_BYTES = 1024 * 1024
 MAX_RESPONSE_BYTES = 4 * 1024 * 1024
+
+
+class _NoRedirectHandler(HTTPRedirectHandler):
+    """Keep configured local endpoints from redirecting prompts elsewhere."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
 
 
 class LocalModelAgent:
@@ -38,17 +45,16 @@ class LocalModelAgent:
             raise ValueError("Agent name must not be empty.")
         if not isinstance(model, str) or not model.strip():
             raise ValueError("Model name must not be empty.")
-        if (
-            not math.isfinite(request_timeout_seconds)
-            or request_timeout_seconds <= 0
-        ):
+        if not math.isfinite(request_timeout_seconds) or request_timeout_seconds <= 0:
             raise ValueError("request_timeout_seconds must be finite and positive.")
 
         parsed = urlsplit(base_url)
         if parsed.scheme not in {"http", "https"} or not parsed.hostname:
             raise ValueError("base_url must be an absolute HTTP or HTTPS URL.")
         if parsed.username or parsed.password or parsed.query or parsed.fragment:
-            raise ValueError("base_url must not contain credentials, query, or fragment.")
+            raise ValueError(
+                "base_url must not contain credentials, query, or fragment."
+            )
 
         hostname = parsed.hostname.rstrip(".").lower()
         try:
@@ -89,10 +95,13 @@ class LocalModelAgent:
         )
 
         try:
-            with urlopen(request, timeout=self.request_timeout_seconds) as response:
+            opener = build_opener(_NoRedirectHandler)
+            with opener.open(request, timeout=self.request_timeout_seconds) as response:
                 raw = response.read(MAX_RESPONSE_BYTES + 1)
         except HTTPError as exc:
-            raise RuntimeError(f"Local model endpoint returned HTTP {exc.code}.") from None
+            raise RuntimeError(
+                f"Local model endpoint returned HTTP {exc.code}."
+            ) from None
         except URLError as exc:
             reason_type = type(exc.reason).__name__
             raise RuntimeError(
@@ -110,9 +119,11 @@ class LocalModelAgent:
             raise RuntimeError("Local model endpoint returned invalid JSON.") from None
 
         if not isinstance(response_data, dict):
-            raise RuntimeError("Local model endpoint returned an unexpected response.")
+            raise TypeError("Local model endpoint returned an unexpected response.")
         message = response_data.get("message")
         content = message.get("content") if isinstance(message, dict) else None
         if not isinstance(content, str) or not content.strip():
-            raise RuntimeError("Local model endpoint returned no usable message content.")
+            raise RuntimeError(
+                "Local model endpoint returned no usable message content."
+            )
         return content.strip()
