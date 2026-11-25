@@ -1,6 +1,6 @@
 # Interoperability Boundaries and OIX Contract Fixture
 
-**Status:** shape-level interoperability test proposed in [PR #16](https://github.com/TushkaLoLz31337/tushka-swarm-collective/pull/16). No OIX runtime dependency, transport, or cryptographic implementation is added.
+**Status:** shape-level interoperability test in [PR #16](https://github.com/TushkaLoLz31337/tushka-swarm-collective/pull/16). Ruff lint/format, unit tests, and demo smoke test passed on the fixture branch. No OIX runtime dependency, transport, or cryptographic implementation is added.
 
 ## Source pins
 
