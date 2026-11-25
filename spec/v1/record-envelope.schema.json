@@ -26,6 +26,6 @@
       {"type":"object","additionalProperties":false,"required":["key","value"],"properties":{"key":{"const":"scope"},"value":{"enum":["private","community","public"]}}},
       {"type":"object","additionalProperties":false,"required":["key","value"],"properties":{"key":{"const":"retention"},"value":{"enum":["ephemeral","project","provenance","security","legal_hold"]}}}
     ]}},
-    "relationships":{"type":"array","maxItems":64,"items":{"type":"object","additionalProperties":false,"required":["relationship_type","target_record_id"],"properties":{"relationship_type":{"enum":["derived_from","cites","corrects","supersedes","replies_to","attached_to"]},"target_record_id":{"type":"string","format":"uuid","pattern":"^[0-9a-fA-F-]{36}$"}}}}
+    "relationships":{"type":"array","maxItems":64,"items":{"type":"object","additionalProperties":false,"required":["relationship_type","target_record_id"],"properties":{"relationship_type":{"enum":["derived_from","cites","corrects","supersedes","replies_to","attached_to"]},"target_record_id":{"type":"string","format":"uuid","pattern":"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"}}}}
   }
 }
