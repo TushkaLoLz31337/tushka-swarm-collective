@@ -39,7 +39,7 @@ All five PRs below are open, non-draft, and reported mergeable at the time of th
 |---|---|---|---|---|
 | [#9](https://github.com/TushkaLoLz31337/tushka-swarm-collective/pull/9) | Autonomous swarm architecture and source-pinned ecosystem register | `240a8b7323bbc663c87fb1c8fb98586c40683c5e` | test: success | Ready; independent architecture/provenance review required |
 | [#13](https://github.com/TushkaLoLz31337/tushka-swarm-collective/pull/13) | Governed record envelope, lifecycle schemas, UUIDv4 and validation | `6e412e69c768631d9d68670cb257373f32c3e8a9` | test: success | Ready; independent schema/security review required |
-| [#14](https://github.com/TushkaLoLz31337/tushka-swarm-collective/pull/14) | Release quality/security gates and package artifacts | `a990d24f9e34a92e6b97d91837c223ff42200494` | quality, package, CodeQL: success; prerelease job skipped because no qualifying tag was pushed | Ready; independent CI/release review and owner-applied main protection required |
+| [#14](https://github.com/TushkaLoLz31337/tushka-swarm-collective/pull/14) | Release quality/security gates, package artifacts, dependency review and Dependabot | `2c86169a47536e75b36d3ec302460caa2696e5bd` (docs/config update) | quality and CodeQL passed on preceding code commit; package re-running after docs/config updates; Dependency review **failed** because repository dependency graph is disabled | Not release-ready until owner enables dependency graph and rerun passes; independent review and main protection also required |
 | [#15](https://github.com/TushkaLoLz31337/tushka-swarm-collective/pull/15) | Bounded local broker and task lifecycle | `827f309bd48249327e8b053dc3c576902991e1f1` | test: success | Ready; independent broker/security review required |
 | [#16](https://github.com/TushkaLoLz31337/tushka-swarm-collective/pull/16) | OIX task/result envelope compatibility fixtures | `2d582f8eb0d9e3cf9dd94d48088c7fea348f93bb` | test: success | Ready; independent interoperability review required |
 
@@ -57,8 +57,8 @@ Do not merge a PR solely because its author reviewed it. The GitHub review API c
 - Existing GitHub release: [v0.1.0-alpha](https://github.com/TushkaLoLz31337/tushka-swarm-collective/releases/tag/v0.1.0-alpha), published as a normal release (not marked prerelease), with **zero uploaded assets**. Its tag points to commit `602b14a64c8b9afefd56a5b58ab195d4280630b5`.
 - Current main commit observed: `e0d727f885650529a0837a4007f33fa9ee3ddee8`.
 - Package metadata on main remains `0.1.0` in `pyproject.toml`.
-- PR #14's quality, package, and CodeQL jobs passed on its head commit. The package job built sdist/wheel, smoke-tested the isolated wheel, generated SHA-256 checksums, and uploaded the `tushka-distributions` artifact. That CI artifact expires 2026-12-25 and is not a permanent GitHub Release asset.
-- PR #14's tag-publishing job was skipped because no qualifying `v*-rc.*` tag was pushed. No new version bump, tag, or release candidate has been created.
+- PR #14's quality and CodeQL jobs passed on the code commit before the latest docs/settings update. The package job previously built sdist/wheel, smoke-tested the isolated wheel, generated SHA-256 checksums, and uploaded the `tushka-distributions` artifact. That CI artifact expires 2026-12-25 and is not a permanent GitHub Release asset. Revalidation is running after the latest workflow changes.
+- PR #14's new Dependency review job failed with the explicit message that dependency review is unsupported until the repository dependency graph is enabled. This is an owner settings action, not a code defect. The job must be rerun successfully after enabling the graph. The release checklist and required-check table now include Dependency review.\n- PR #14's tag-publishing job was skipped because no qualifying `v*-rc.*` tag was pushed. No new version bump, tag, or release candidate has been created.
 - `main` is not protected: the branch API reports `protected=false`; the repository rulesets endpoint returned an empty list. This is a hard release blocker.
 - The documented maintainer accounts `HuffmanMainNode` and `Ryzean84` have read permission in the current access snapshot. Read access does not permit formal approving reviews. A repository owner must grant at least Write to an intended independent reviewer; do not grant Admin merely to enable reviews.
 - PR #14 contains `docs/REPOSITORY-ADMIN-SETUP.md` with the exact proposed main ruleset and required checks. This document does not apply settings; an owner must configure and verify them in GitHub Settings.
@@ -83,12 +83,12 @@ Any authorized contributor can resume from the public checkpoint without access 
 
 1. Repository owner grants Write (or Maintain, if justified) to at least one independent reviewer account and confirms reviewer identity.
 2. Repository owner activates the `main-release-protection` ruleset from `docs/REPOSITORY-ADMIN-SETUP.md`: require one independent approval, dismiss stale approvals, resolve conversations, require the quality/package/CodeQL checks, block force-push and deletion, and avoid routine bypass.
-3. Independent reviewers review PRs #9, #13, #14, #15, and #16; address findings and rerun checks after changes.
-4. Merge the reviewed PRs in a deliberate order, resolving conflicts and rerunning checks against the resulting main commit.
-5. Confirm the next candidate version; update package metadata and release notes together. The existing `0.1.0` package version and `v0.1.0-alpha` tag are historical and must not be silently overwritten.
-6. Create a new version tag only from the exact verified main commit; confirm the tag-triggered workflow publishes the GitHub prerelease with wheel, sdist, and `SHA256SUMS`.
-7. Verify published checksums and installation; record tag, commit, workflow, artifact names, and release URL.
-8. Continue the durable broker and governed-storage slices only after their interfaces and security boundaries are independently reviewed.
+3. Repository owner enables the dependency graph, Dependabot alerts/security updates, secret scanning, and push protection where available; verify the dependency review check passes.\n4. Independent reviewers review PRs #9, #13, #14, #15, and #16; address findings and rerun checks after changes.
+5. Merge the reviewed PRs in a deliberate order, resolving conflicts and rerunning checks against the resulting main commit.
+6. Confirm the next candidate version; update package metadata and release notes together. The existing `0.1.0` package version and `v0.1.0-alpha` tag are historical and must not be silently overwritten.
+7. Create a new version tag only from the exact verified main commit; confirm the tag-triggered workflow publishes the GitHub prerelease with wheel, sdist, and `SHA256SUMS`.
+8. Verify published checksums and installation; record tag, commit, workflow, artifact names, and release URL.
+9. Continue the durable broker and governed-storage slices only after their interfaces and security boundaries are independently reviewed.
 
 ## 8. Healthy handoff definition
 
