@@ -2,6 +2,7 @@ import json
 import re
 import unittest
 from pathlib import Path
+from uuid import UUID
 
 from jsonschema import Draft202012Validator
 from jsonschema.exceptions import ValidationError
@@ -58,7 +59,7 @@ class OIXInteropContractTests(unittest.TestCase):
         self.assertGreaterEqual(len(body["recipient"]), 1)
         self.assertLessEqual(len(body["recipient"]), 256)
         self.assertIsInstance(body["message_id"], str)
-        self.assertRegex(body["message_id"], re.compile(r"^[0-9a-fA-F-]{36}$"))
+        UUID(body["message_id"])
         self.assertIsInstance(body["issued_at"], int)
         self.assertIsInstance(body["expires_at"], int)
         self.assertGreater(body["expires_at"], body["issued_at"])
