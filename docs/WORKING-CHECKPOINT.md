@@ -51,6 +51,7 @@ Do not merge a PR solely because its author reviewed it. The GitHub review API c
 - [Issue #10 — Companion interoperability](https://github.com/TushkaLoLz31337/tushka-swarm-collective/issues/10): source-pinned evaluations are in PR #9; OIX shape-level task/result compatibility fixtures are in PR #16. Candidates remain references, not integrated dependencies. The fixture signature is a placeholder; no signature verification or transport is implemented.
 - [Issue #11 — Record governance](https://github.com/TushkaLoLz31337/tushka-swarm-collective/issues/11): PR #13 implements schemas, fixtures, UUIDv4 generation, and validation. Persistent storage, authorization enforcement, retention execution, deletion, quotas, and private/shared isolation remain unimplemented.
 - [Issue #2 — Founding architecture review](https://github.com/TushkaLoLz31337/tushka-swarm-collective/issues/2): keep open for independent review findings and actionable follow-up issues.
+- [Issue #17 — Repository owner security and release controls](https://github.com/TushkaLoLz31337/tushka-swarm-collective/issues/17): enable dependency graph, Dependabot, secret scanning/push protection, private vulnerability reporting, main ruleset, and independent reviewer access. Owner-only settings; blocks tagging until verified.
 
 ## 5. Release readiness — verified 2026-11-25
 
@@ -83,8 +84,8 @@ Any authorized contributor can resume from the public checkpoint without access 
 
 ## 7. Immediate sequence
 
-1. Repository owner grants Write (or Maintain, if justified) to at least one independent reviewer account and confirms reviewer identity.
-2. Repository owner activates the `main-release-protection` ruleset from `docs/REPOSITORY-ADMIN-SETUP.md`: require one independent approval, dismiss stale approvals, resolve conversations, require `quality`, `package`, `Analyze Python`, and `Dependency review`, block force-push and deletion, and avoid routine bypass.
+1. Complete [Issue #17](https://github.com/TushkaLoLz31337/tushka-swarm-collective/issues/17): owner applies security settings, main ruleset, and independent reviewer permissions.
+2. Verify the `main-release-protection` ruleset and all four required checks are active on `main`; do not claim protection until a non-admin PR confirms enforcement.
 3. Repository owner enables the dependency graph, Dependabot alerts/security updates, secret scanning, and push protection where available; verify the dependency review check passes.
 4. Independent reviewers review PRs #9, #13, #14, #15, and #16; address findings and rerun checks after changes.
 5. Merge the reviewed PRs in a deliberate order, resolving conflicts and rerunning checks against the resulting main commit.
