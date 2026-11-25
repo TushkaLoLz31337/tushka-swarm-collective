@@ -28,7 +28,6 @@ See Issue #11 for the complete acceptance criteria.
 
 ## Quality checkpoint
 
-- Ruff 0.17.6 lint and format checks passed after applying formatter output to the branch.
-- Bandit 1.9.4 and pip-audit 2.10.1 passed on the record-contract branch after the local model adapter's redirect protection was included.
+- Ruff 0.17.6 lint and format checks, Bandit 1.9.4, pip-audit 2.10.1, and CodeQL v4 security-extended analysis passed after applying formatter output and local model redirect protection.
 - Unit tests, demo smoke test, sdist/wheel builds, and isolated wheel installation smoke test passed.
 - The temporary audit workflow was removed after validation; PR #14 remains the permanent quality/security workflow proposal.
