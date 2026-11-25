@@ -25,3 +25,9 @@ The jsonschema dependency remains test-only. Runtime record creation and validat
 5. Fail-closed tests proving private records never enter shared indexes or outbound tasks without explicit permission.
 
 See Issue #11 for the complete acceptance criteria.
+
+## Quality checkpoint
+
+- Ruff 0.17.6 lint and format checks passed after applying formatter output to the branch.
+- Unit tests and demo smoke test passed on the formatted source tree.
+- The temporary audit workflow was removed after validation; PR #14 remains the permanent quality/security workflow proposal.
