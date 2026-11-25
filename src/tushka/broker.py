@@ -297,6 +297,7 @@ class LocalBroker:
             created_at=now,
             updated_at=now,
         )
+        record.events.append(LifecycleEvent(TaskState.CREATED, now))
         self._records[task.task_id] = record
         self._transition(record, TaskState.ACCEPTED)
         self._transition(record, TaskState.QUEUED)
