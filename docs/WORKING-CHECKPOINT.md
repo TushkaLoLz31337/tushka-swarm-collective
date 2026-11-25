@@ -33,7 +33,7 @@ PR #12 is documentation, not a storage engine or enforcement implementation.
 
 ## 3. Active pull requests — refreshed 2026-11-25
 
-All five PRs below are open, non-draft, and reported mergeable at the time of this checkpoint. Their latest observed required checks passed. **No independent approving reviews are recorded.** Passing CI is not a substitute for human review.
+All five PRs below are open, non-draft, and reported mergeable at the time of this checkpoint. Core quality/package/CodeQL or test checks passed where run; PR #14's new Dependency review check is blocked because the repository dependency graph is disabled. **No independent approving reviews are recorded.** Passing CI is not a substitute for human review.
 
 | PR | Work | Head commit | Latest observed checks | Status / next action |
 |---|---|---|---|---|
