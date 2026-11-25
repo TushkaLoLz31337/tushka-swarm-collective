@@ -7,7 +7,8 @@ The broker is a bounded in-process dispatcher for agents explicitly registered b
 ## Current behavior
 
 - Non-blocking admission returns `accepted`, `deferred`, or `rejected`.
-- Queue and in-memory task history have configured bounds.
+- Queue and in-memory task history have configured bounds (defaults: 128 queued tasks and 256 retained records).
+- UTF-8 prompt and result sizes are bounded (defaults: 64 KiB per prompt and 128 KiB per result); oversize input is rejected and oversize output is not retained.
 - Workers declare capabilities; a task is routed only to a registered worker satisfying every requested capability.
 - Worker concurrency and shared per-node concurrency are bounded.
 - Idempotency keys prevent duplicate execution while their task record remains in the bounded history.
@@ -44,7 +45,9 @@ async def main() -> None:
             )
         ],
         max_queued_tasks=32,
-        max_record_history=1000,
+        max_record_history=256,
+        max_prompt_bytes=65_536,
+        max_result_bytes=131_072,
         per_node_concurrency=1,
     )
     await broker.start()
