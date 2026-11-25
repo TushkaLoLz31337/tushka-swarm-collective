@@ -6,10 +6,10 @@ This checklist is a hard gate for every release candidate. A tag must point to t
 
 - [ ] Confirm the target version and release channel; match pyproject.toml, release notes, and tag.
 - [ ] Review and merge all intended PRs; no unreviewed or conflicted work is included.
-- [ ] Ensure main is protected with required independent review and required CI/security checks.
+- [ ] Ensure main is protected with required independent review and required CI/security checks, including dependency review.
 - [ ] Run Ruff lint and format checks.
 - [ ] Run the complete unit and demo test suite.
-- [ ] Run Bandit and CodeQL security analysis.
+- [ ] Run Bandit and CodeQL security analysis.\n- [ ] Confirm GitHub secret scanning is active and review open alerts.\n- [ ] Confirm dependency review passes and Dependabot alerts are triaged.
 - [ ] Run pip-audit against pinned CI and test dependencies.
 - [ ] Build both source distribution and wheel.
 - [ ] Install the wheel in an isolated target and run the demo.
