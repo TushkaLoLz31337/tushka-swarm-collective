@@ -110,7 +110,7 @@ class LocalModelAgent:
             raise RuntimeError("Local model endpoint returned invalid JSON.") from None
 
         if not isinstance(response_data, dict):
-            raise RuntimeError("Local model endpoint returned an unexpected response.")
+            raise TypeError("Local model endpoint returned an unexpected response.")
         message = response_data.get("message")
         content = message.get("content") if isinstance(message, dict) else None
         if not isinstance(content, str) or not content.strip():
