@@ -41,6 +41,7 @@ Requires Python 3.11 or newer. From the repository root:
 - tests/ — automated tests for core behavior and local HTTP adapter behavior
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — system boundaries and design principles
 - [docs/LOCAL-MODEL-ADAPTER.md](docs/LOCAL-MODEL-ADAPTER.md) — local inference configuration and limits
+- [docs/LOCAL-BROKER.md](docs/LOCAL-BROKER.md) — bounded local task dispatch, lifecycle, and current limitations
 - [docs/ROADMAP.md](docs/ROADMAP.md) — staged implementation plan
 - [docs/WORKING-CHECKPOINT.md](docs/WORKING-CHECKPOINT.md) — shared status, handoffs, and resume instructions
 - [docs/RECORD-GOVERNANCE.md](docs/RECORD-GOVERNANCE.md) — immutable provenance, identifiers, tags, directional paths, retention, and storage-bloat controls (proposed)
