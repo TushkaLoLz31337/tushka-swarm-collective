@@ -8,11 +8,11 @@ from __future__ import annotations
 
 import asyncio
 import math
+from collections.abc import Sequence
 from collections import OrderedDict
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import StrEnum
-from collections.abc import Sequence
 
 from .core import Agent, AgentResult, Task
 
