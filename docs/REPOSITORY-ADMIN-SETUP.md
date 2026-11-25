@@ -24,7 +24,7 @@ Open **Settings → Rules → Rulesets → New branch ruleset**.
 
 Because the new quality/security workflows are introduced by PR #14, their check names may not be selectable in the ruleset until they have run on the default branch. Use a two-step rollout:
 
-1. **Before merging PR #14:** activate the ruleset with the pull-request requirement, one independent approval, stale-review dismissal, conversation resolution, force-push/deletion blocks, and the currently existing `test` check (if GitHub offers it). Enable the dependency graph so PR #14's Dependency review check can pass. Do not merge PR #14 without its independent approval and all available checks passing.
+1. **Before merging PR #14:** activate the ruleset with the pull-request requirement, one independent approval, stale-review dismissal, conversation resolution, and force-push/deletion blocks. The PR replaces the existing `test` workflow, so do not configure a `test` status requirement that the PR cannot satisfy. During this short bootstrap only, manually verify PR #14's `quality`, `package`, and `Analyze Python` checks; first enable the dependency graph so `Dependency review` can pass. Do not merge PR #14 without independent approval and all four checks passing.
 2. **Immediately after PR #14 merges:** edit the ruleset and replace the transitional `test` requirement with the four checks listed below. Confirm each has reported on the default branch and is selectable. Keep the review and force-push/deletion rules active throughout.
 
 Add these required checks after the workflows are present on the default branch and the dependency graph has been enabled:
