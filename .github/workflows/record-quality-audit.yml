@@ -2,6 +2,8 @@ name: Temporary record-contract quality audit
 
 on:
   pull_request:
+  push:
+    branches: [governance/record-envelope-contracts-v1]
 
 permissions:
   contents: read
