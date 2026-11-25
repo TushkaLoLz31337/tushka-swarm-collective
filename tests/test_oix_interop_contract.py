@@ -33,9 +33,7 @@ def load_json(path: Path):
 class OIXInteropContractTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.task_validator = Draft202012Validator(
-            load_json(SPEC / "task.schema.json")
-        )
+        cls.task_validator = Draft202012Validator(load_json(SPEC / "task.schema.json"))
         cls.result_validator = Draft202012Validator(
             load_json(SPEC / "result.schema.json")
         )
