@@ -71,18 +71,25 @@ class WorkerRegistration:
         except TypeError as exc:
             raise TypeError("capabilities must be an iterable of strings.") from exc
         object.__setattr__(self, "capabilities", normalized_capabilities)
-        if not isinstance(self.node_id, str) or not self.node_id.strip():
-            raise ValueError("node_id must be a non-empty string.")
+        if (
+            not isinstance(self.node_id, str)
+            or not self.node_id.strip()
+            or len(self.node_id) > 128
+        ):
+            raise ValueError("node_id must be a non-empty string of at most 128 characters.")
         if (
             not isinstance(self.max_concurrency, int)
             or isinstance(self.max_concurrency, bool)
             or self.max_concurrency < 1
         ):
             raise ValueError("max_concurrency must be a positive integer.")
-        if any(
-            not isinstance(item, str) or not item.strip() for item in self.capabilities
+        if len(self.capabilities) > 32 or any(
+            not isinstance(item, str)
+            or not item.strip()
+            or len(item) > 64
+            for item in self.capabilities
         ):
-            raise ValueError("Worker capabilities must be non-empty strings.")
+            raise ValueError("Worker capabilities must be bounded non-empty strings.")
 
 
 @dataclass(frozen=True, slots=True)
@@ -150,7 +157,9 @@ class LocalBroker:
         workers: Sequence[WorkerRegistration],
         *,
         max_queued_tasks: int = 128,
-        max_record_history: int = 10_000,
+        max_record_history: int = 256,
+        max_prompt_bytes: int = 65_536,
+        max_result_bytes: int = 131_072,
         per_node_concurrency: int = 1,
         retry_after_seconds: float = 1.0,
     ) -> None:
@@ -161,6 +170,8 @@ class LocalBroker:
         for name, value in (
             ("max_queued_tasks", max_queued_tasks),
             ("max_record_history", max_record_history),
+            ("max_prompt_bytes", max_prompt_bytes),
+            ("max_result_bytes", max_result_bytes),
             ("per_node_concurrency", per_node_concurrency),
         ):
             if not isinstance(value, int) or isinstance(value, bool) or value < 1:
@@ -188,6 +199,8 @@ class LocalBroker:
         }
         self._max_queued_tasks = max_queued_tasks
         self._max_record_history = max_record_history
+        self._max_prompt_bytes = max_prompt_bytes
+        self._max_result_bytes = max_result_bytes
         self._retry_after_seconds = retry_after_seconds
         self._records: OrderedDict[str, _TaskRecord] = OrderedDict()
         self._idempotency: dict[str, str] = {}
@@ -231,6 +244,20 @@ class LocalBroker:
             return AdmissionResult(
                 AdmissionStatus.REJECTED, task.task_id, "broker_not_running"
             )
+        if len(task.task_id) > 128:
+            return AdmissionResult(
+                AdmissionStatus.REJECTED, task.task_id, "task_id_too_long"
+            )
+        try:
+            prompt_size = len(task.prompt.encode("utf-8"))
+        except UnicodeEncodeError:
+            return AdmissionResult(
+                AdmissionStatus.REJECTED, task.task_id, "invalid_prompt_encoding"
+            )
+        if prompt_size > self._max_prompt_bytes:
+            return AdmissionResult(
+                AdmissionStatus.REJECTED, task.task_id, "prompt_too_large"
+            )
 
         if isinstance(required_capabilities, str):
             return AdmissionResult(
@@ -242,12 +269,19 @@ class LocalBroker:
             return AdmissionResult(
                 AdmissionStatus.REJECTED, task.task_id, "invalid_capability"
             )
-        if any(not isinstance(item, str) or not item.strip() for item in required):
+        if len(required) > 32 or any(
+            not isinstance(item, str)
+            or not item.strip()
+            or len(item) > 64
+            for item in required
+        ):
             return AdmissionResult(
                 AdmissionStatus.REJECTED, task.task_id, "invalid_capability"
             )
         if idempotency_key is not None and (
-            not isinstance(idempotency_key, str) or not idempotency_key.strip()
+            not isinstance(idempotency_key, str)
+            or not idempotency_key.strip()
+            or len(idempotency_key) > 256
         ):
             return AdmissionResult(
                 AdmissionStatus.REJECTED, task.task_id, "invalid_idempotency_key"
@@ -454,9 +488,27 @@ class LocalBroker:
                     self._transition(
                         record, TaskState.FAILED, error_code="worker_failed"
                     )
+                elif not isinstance(result.content, str):
+                    self._transition(
+                        record, TaskState.FAILED, error_code="invalid_worker_result"
+                    )
                 else:
-                    record.result = result
-                    self._transition(record, TaskState.SUCCEEDED)
+                    try:
+                        result_size = len(result.content.encode("utf-8"))
+                    except UnicodeEncodeError:
+                        self._transition(
+                            record, TaskState.FAILED, error_code="invalid_worker_result"
+                        )
+                    else:
+                        if result_size > self._max_result_bytes:
+                            self._transition(
+                                record, TaskState.FAILED, error_code="result_too_large"
+                            )
+                        else:
+                            record.result = AgentResult(
+                                registration.agent.name, result.content
+                            )
+                            self._transition(record, TaskState.SUCCEEDED)
             except TimeoutError:
                 self._transition(
                     record, TaskState.EXPIRED, error_code="deadline_expired"
