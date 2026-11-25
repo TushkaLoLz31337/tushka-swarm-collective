@@ -82,6 +82,33 @@ class LocalBrokerTests(unittest.IsolatedAsyncioTestCase):
         finally:
             await broker.close()
 
+    async def test_rejects_prompt_over_configured_byte_limit(self):
+        worker = StubWorker("worker")
+        broker = LocalBroker([WorkerRegistration(worker)], max_prompt_bytes=4)
+        await broker.start()
+        try:
+            result = broker.submit(Task("task-large-prompt", "12345"))
+            self.assertEqual(result.status, AdmissionStatus.REJECTED)
+            self.assertEqual(result.reason, "prompt_too_large")
+            self.assertIsNone(broker.get_record("task-large-prompt"))
+            self.assertEqual(worker.calls, 0)
+        finally:
+            await broker.close()
+
+    async def test_rejects_worker_result_over_configured_byte_limit(self):
+        worker = StubWorker("worker", content="12345")
+        broker = LocalBroker([WorkerRegistration(worker)], max_result_bytes=4)
+        await broker.start()
+        try:
+            admission = broker.submit(Task("task-large-result", "small prompt"))
+            self.assertEqual(admission.status, AdmissionStatus.ACCEPTED)
+            result = await broker.wait(admission.task_id)
+            self.assertEqual(result.state, TaskState.FAILED)
+            self.assertEqual(result.error_code, "result_too_large")
+            self.assertIsNone(result.result)
+        finally:
+            await broker.close()
+
     async def test_rejects_when_no_worker_has_required_capabilities(self):
         worker = StubWorker("general", capabilities={"chat"})
         broker = LocalBroker([WorkerRegistration(worker, frozenset({"chat"}))])
