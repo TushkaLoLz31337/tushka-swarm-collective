@@ -4,7 +4,12 @@ from pathlib import Path
 
 from jsonschema import Draft202012Validator, FormatChecker
 
-from tushka.records import create_lifecycle_event, create_record, validate_lifecycle_event, validate_record
+from tushka.records import (
+    create_lifecycle_event,
+    create_record,
+    validate_lifecycle_event,
+    validate_record,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = ROOT / "spec" / "v1"
