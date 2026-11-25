@@ -44,7 +44,7 @@ Do not merge a PR solely because its author reviewed it. At least one independen
 ## 4. Active implementation issues
 
 - [Issue #6 — Local communication broker](https://github.com/TushkaLoLz31337/tushka-swarm-collective/issues/6): PR #15 proposes the first in-process slice with bounded admission, capability routing, acknowledgements, idempotency, deadlines, cancellation, and lifecycle history. Retries, dead-letter review, stronger fairness, persistence, and authenticated transport remain open.
-- [Issue #10 — Companion interoperability](https://github.com/TushkaLoLz31337/tushka-swarm-collective/issues/10): finish source-pinned evaluations and contract-compatibility tests for Open-Swarm, OIX, OpenWorkSpace, and Mesh Archivist Engine. Candidate/reference status is not integration.
+- [Issue #10 — Companion interoperability](https://github.com/TushkaLoLz31337/tushka-swarm-collective/issues/10): source-pinned evaluations are in PR #9; OIX shape-level task/result compatibility fixtures are in PR #16. Candidates remain references, not integrated dependencies.
 - [Issue #11 — Record governance](https://github.com/TushkaLoLz31337/tushka-swarm-collective/issues/11): PR #13 implements only schemas, fixtures, UUIDv4 generation, and validation. Storage, authorization, retention execution, deletion, quotas, and private/shared isolation remain open.
 - [Issue #2 — Founding architecture review](https://github.com/TushkaLoLz31337/tushka-swarm-collective/issues/2): keep open for independent review findings and actionable follow-up issues.
 
