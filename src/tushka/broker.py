@@ -7,12 +7,12 @@ transport, persistent storage, cross-node identity, or private-memory sharing.
 from __future__ import annotations
 
 import asyncio
+import math
 from collections import OrderedDict
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import StrEnum
-import math
-from typing import Sequence
+from collections.abc import Sequence
 
 from .core import Agent, AgentResult, Task
 
@@ -60,13 +60,13 @@ class WorkerRegistration:
         if not isinstance(getattr(self.agent, "name", None), str) or not self.agent.name.strip():
             raise ValueError("Worker agent must have a non-empty name.")
         if not callable(getattr(self.agent, "run", None)):
-            raise ValueError("Worker agent must provide an async run method.")
+            raise TypeError("Worker agent must provide an async run method.")
         if isinstance(self.capabilities, str):
-            raise ValueError("capabilities must be a collection of capability names.")
+            raise TypeError("capabilities must be a collection of capability names.")
         try:
             normalized_capabilities = frozenset(self.capabilities)
         except TypeError as exc:
-            raise ValueError("capabilities must be an iterable of strings.") from exc
+            raise TypeError("capabilities must be an iterable of strings.") from exc
         object.__setattr__(self, "capabilities", normalized_capabilities)
         if not isinstance(self.node_id, str) or not self.node_id.strip():
             raise ValueError("node_id must be a non-empty string.")
@@ -407,8 +407,10 @@ class LocalBroker:
     async def _execute(
         self, registration: WorkerRegistration, record: _TaskRecord
     ) -> None:
-        async with self._worker_semaphores[registration.agent.name]:
-            async with self._node_semaphores[registration.node_id]:
+        async with (
+            self._worker_semaphores[registration.agent.name],
+            self._node_semaphores[registration.node_id],
+        ):
                 if record.state in _TERMINAL_STATES:
                     return
                 if record.deadline_at is not None and record.deadline_at <= _now():
@@ -460,7 +462,7 @@ class LocalBroker:
                             record, TaskState.CANCELLED, error_code="cancelled"
                         )
                     raise
-                except Exception:
+                except Exception:  # noqa: BLE001 - expose only a stable worker error code
                     self._transition(
                         record, TaskState.FAILED, error_code="worker_error"
                     )
@@ -529,7 +531,7 @@ class LocalBroker:
 
 
 def _now() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 def _snapshot(record: _TaskRecord) -> TaskSnapshot:
