@@ -4,7 +4,6 @@ from pathlib import Path
 
 from jsonschema import Draft202012Validator
 
-
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = ROOT / "spec" / "v1"
 MAX_PROMPT_UTF8_BYTES = 65_536
@@ -21,8 +20,7 @@ def validate_task(task):
     prompt_size = len(task["prompt"].encode("utf-8"))
     if prompt_size > MAX_PROMPT_UTF8_BYTES:
         raise ValueError(
-            f"prompt is {prompt_size} UTF-8 bytes; maximum is "
-            f"{MAX_PROMPT_UTF8_BYTES}"
+            f"prompt is {prompt_size} UTF-8 bytes; maximum is {MAX_PROMPT_UTF8_BYTES}"
         )
 
 
