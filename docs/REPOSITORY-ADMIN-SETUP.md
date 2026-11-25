@@ -42,7 +42,24 @@ If either account is an intended maintainer/reviewer, open **Settings → Collab
 
 Do not grant Admin solely to enable PR review. Keep at least one independent reviewer who is not the PR author.
 
-## 3. Release controls
+
+## 3. Security and dependency controls
+
+Open **Settings → Security and analysis** and verify the following for this public repository:
+
+- Enable the dependency graph.
+- Enable Dependabot alerts and security updates.
+- Confirm secret scanning is active and alerts are visible to maintainers.
+- Enable repository push protection where the repository's available plan/settings permit it; user-level push protection is not a substitute for checking repository-level alert configuration.
+- Keep CodeQL code scanning enabled and review alerts rather than treating a green workflow as proof that no vulnerabilities exist.
+- Enable private vulnerability reporting so researchers can report findings without publishing exploit details.
+- Review GitHub Actions permissions and restrict third-party actions to trusted publishers; pin actions to full commit SHAs as a follow-up hardening task.
+
+The CI workflow now includes a Dependency Review check for pull requests and Dependabot configuration for weekly pip and GitHub Actions updates. These checks do not replace the repository's security settings or a human review of dependency changes.
+
+GitHub documents that dependency graph, Dependabot alerts, secret scanning, push protection, and code scanning are important controls for public repositories; feature availability and defaults vary by control. See [GitHub security settings](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-security-and-analysis-settings-for-your-repository) and [GitHub security features](https://docs.github.com/en/code-security/getting-started/github-security-features).
+
+## 4. Release controls
 
 - Keep release publication restricted to versioned release-candidate tags matching `v*-rc.*`.
 - Create tags only from the exact verified `main` commit.
@@ -50,14 +67,14 @@ Do not grant Admin solely to enable PR review. Keep at least one independent rev
 - Verify checksums after download.
 - Keep production credentials and signing keys out of source, issue comments, workflow logs, and build artifacts.
 
-## 4. Completion evidence
+## 5. Completion evidence
 
 After applying settings, record in the shared checkpoint:
 
 - ruleset name and target branch;
-- required check names;
+- required check names, including `Dependency review`;
 - approval count and conversation-resolution setting;
 - reviewer accounts and permission levels;
-- date applied and owner confirmation.
+- date applied and owner confirmation;\n- dependency graph, Dependabot alerts/security updates, secret scanning, push protection, and private vulnerability reporting status.
 
 A ruleset is not considered active merely because this document exists. Verify the ruleset in GitHub Settings and test it with a non-admin PR before claiming `main` is protected.
