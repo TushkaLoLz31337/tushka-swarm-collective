@@ -19,6 +19,7 @@ class LocalModelHandler(BaseHTTPRequestHandler):
     request_path = None
     status_code = 200
     delay_seconds = 0
+    redirect_location = None
 
     def do_POST(self):
         type(self).request_path = self.path
@@ -31,6 +32,8 @@ class LocalModelHandler(BaseHTTPRequestHandler):
             body = json.dumps(type(self).response_payload).encode("utf-8")
         self.send_response(type(self).status_code)
         self.send_header("Content-Type", "application/json")
+        if type(self).redirect_location:
+            self.send_header("Location", type(self).redirect_location)
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         try:
@@ -63,6 +66,7 @@ class LocalModelAgentTests(unittest.TestCase):
         LocalModelHandler.request_path = None
         LocalModelHandler.status_code = 200
         LocalModelHandler.delay_seconds = 0
+        LocalModelHandler.redirect_location = None
 
     def test_sends_prompt_and_returns_attributed_result(self):
         agent = LocalModelAgent("local-one", "test-model", self.base_url)
@@ -104,6 +108,14 @@ class LocalModelAgentTests(unittest.TestCase):
         )
         with self.assertRaisesRegex(RuntimeError, "timed out"):
             asyncio.run(agent.run(Task("task-timeout", "hello")))
+
+    def test_does_not_follow_endpoint_redirects(self):
+        LocalModelHandler.status_code = 302
+        LocalModelHandler.redirect_location = f"{self.base_url}/redirect-target"
+        agent = LocalModelAgent("local-one", "test-model", self.base_url)
+        with self.assertRaisesRegex(RuntimeError, "HTTP 302"):
+            asyncio.run(agent.run(Task("task-redirect", "private prompt")))
+        self.assertEqual(LocalModelHandler.request_path, "/api/chat")
 
     def test_rejects_missing_message_content(self):
         LocalModelHandler.response_payload = {"message": {"content": ""}}
