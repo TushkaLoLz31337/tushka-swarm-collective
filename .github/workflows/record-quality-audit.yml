@@ -1,4 +1,4 @@
-name: Temporary record-contract quality audit
+name: Temporary record-contract quality audit # final verification after automated formatting
 
 on:
   push:
