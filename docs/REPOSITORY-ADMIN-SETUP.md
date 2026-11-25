@@ -24,8 +24,8 @@ Add these required checks after the workflows are present on the default branch 
 
 | Workflow / job | Why it is required |
 |---|---|
-| `Quality and package / quality` | Ruff lint/format, Bandit, pip-audit, unit tests, demo smoke test |
-| `Quality and package / package` | source/wheel build, isolated install smoke test, checksummed artifacts |
+| `quality` | Ruff lint/format, Bandit, pip-audit, unit tests, demo smoke test |
+| `package` | source/wheel build, isolated install smoke test, checksummed artifacts |
 | `Analyze Python` | CodeQL security-extended analysis |\n| `Dependency review` | Reject pull requests introducing dependencies with known high-severity vulnerabilities |
 
 GitHub may show check names only after each workflow has reported at least once on the default branch. Select the exact names displayed in the ruleset UI.
