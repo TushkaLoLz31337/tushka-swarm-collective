@@ -185,6 +185,59 @@ class LocalBrokerTests(unittest.IsolatedAsyncioTestCase):
         finally:
             await broker.close()
 
+    async def test_running_cancellation_does_not_kill_worker_loop(self):
+        gate = asyncio.Event()
+
+        class FirstTaskBlocksWorker(StubWorker):
+            async def run(self, task):
+                self.calls += 1
+                self.started.set()
+                if task.task_id == "task-cancel-running":
+                    await gate.wait()
+                return AgentResult(self.name, "completed")
+
+        worker = FirstTaskBlocksWorker("worker")
+        broker = LocalBroker([WorkerRegistration(worker)])
+        await broker.start()
+        try:
+            broker.submit(Task("task-cancel-running", "first"))
+            await worker.started.wait()
+            self.assertTrue(broker.cancel("task-cancel-running"))
+            cancelled = await broker.wait("task-cancel-running")
+            self.assertEqual(cancelled.state, TaskState.CANCELLED)
+
+            next_admission = broker.submit(Task("task-after-cancel", "second"))
+            self.assertEqual(next_admission.status, AdmissionStatus.ACCEPTED)
+            completed = await asyncio.wait_for(
+                broker.wait("task-after-cancel"), timeout=1
+            )
+            self.assertEqual(completed.state, TaskState.SUCCEEDED)
+            self.assertEqual(worker.calls, 2)
+        finally:
+            gate.set()
+            await broker.close()
+
+    async def test_worker_failure_exposes_only_stable_error_code(self):
+        class FailingWorker(StubWorker):
+            async def run(self, task):
+                self.calls += 1
+                raise RuntimeError("sensitive-token-must-not-leak")
+
+        worker = FailingWorker("worker")
+        broker = LocalBroker([WorkerRegistration(worker)])
+        await broker.start()
+        try:
+            broker.submit(Task("task-failure", "work"))
+            failed = await broker.wait("task-failure")
+            self.assertEqual(failed.state, TaskState.FAILED)
+            self.assertEqual(failed.error_code, "worker_error")
+            self.assertNotIn(
+                "sensitive-token-must-not-leak",
+                repr(failed.events),
+            )
+        finally:
+            await broker.close()
+
     async def test_close_cancels_running_work(self):
         gate = asyncio.Event()
         worker = StubWorker("worker", gate=gate)
