@@ -139,7 +139,9 @@ class LocalModelAgentTests(unittest.TestCase):
 
     def test_rejects_non_finite_timeout(self):
         with self.assertRaises(ValueError):
-            LocalModelAgent("local-one", "test-model", request_timeout_seconds=float("inf"))
+            LocalModelAgent(
+                "local-one", "test-model", request_timeout_seconds=float("inf")
+            )
 
     def test_rejects_empty_identity_or_model(self):
         with self.assertRaises(ValueError):

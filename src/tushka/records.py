@@ -9,21 +9,76 @@ from typing import Any
 from uuid import UUID, uuid4
 
 SCHEMA_VERSION = "1.0"
-RECORD_TYPES = frozenset({"task", "decision", "source", "artifact", "checkpoint", "conversation_summary", "experiment", "policy", "use_case"})
-PURPOSES = frozenset({"orchestration", "continuity", "research", "build", "audit", "governance", "interoperability"})
-CLASSIFICATIONS = frozenset({"public", "community", "private", "confidential", "restricted"})
-RETENTION_CLASSES = frozenset({"ephemeral", "task", "project", "provenance", "security", "legal_hold"})
-REVIEW_STATES = frozenset({"unreviewed", "reviewed", "verified", "disputed", "superseded", "withdrawn"})
+RECORD_TYPES = frozenset(
+    {
+        "task",
+        "decision",
+        "source",
+        "artifact",
+        "checkpoint",
+        "conversation_summary",
+        "experiment",
+        "policy",
+        "use_case",
+    }
+)
+PURPOSES = frozenset(
+    {
+        "orchestration",
+        "continuity",
+        "research",
+        "build",
+        "audit",
+        "governance",
+        "interoperability",
+    }
+)
+CLASSIFICATIONS = frozenset(
+    {"public", "community", "private", "confidential", "restricted"}
+)
+RETENTION_CLASSES = frozenset(
+    {"ephemeral", "task", "project", "provenance", "security", "legal_hold"}
+)
+REVIEW_STATES = frozenset(
+    {"unreviewed", "reviewed", "verified", "disputed", "superseded", "withdrawn"}
+)
 ACTOR_TYPES = frozenset({"human", "agent", "node", "service"})
 ORIGIN_TYPES = frozenset({"local", "repository", "url", "generated"})
-RELATIONSHIP_TYPES = frozenset({"derived_from", "cites", "corrects", "supersedes", "replies_to", "attached_to"})
-EVENT_TYPES = frozenset({"created", "validated", "reviewed", "superseded", "corrected", "tombstoned", "payload_deleted", "retention_expired", "exported"})
+RELATIONSHIP_TYPES = frozenset(
+    {"derived_from", "cites", "corrects", "supersedes", "replies_to", "attached_to"}
+)
+EVENT_TYPES = frozenset(
+    {
+        "created",
+        "validated",
+        "reviewed",
+        "superseded",
+        "corrected",
+        "tombstoned",
+        "payload_deleted",
+        "retention_expired",
+        "exported",
+    }
+)
 TAG_VALUES = {
     "type": RECORD_TYPES,
-    "domain": frozenset({"orchestration", "continuity", "security", "protocol", "governance", "research", "build", "integration"}),
+    "domain": frozenset(
+        {
+            "orchestration",
+            "continuity",
+            "security",
+            "protocol",
+            "governance",
+            "research",
+            "build",
+            "integration",
+        }
+    ),
     "state": frozenset({"proposed", "verified", "disputed"}),
     "scope": frozenset({"private", "community", "public"}),
-    "retention": frozenset({"ephemeral", "project", "provenance", "security", "legal_hold"}),
+    "retention": frozenset(
+        {"ephemeral", "project", "provenance", "security", "legal_hold"}
+    ),
 }
 _DIGEST_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
 _REASON_RE = re.compile(r"^[a-z][a-z0-9_]{0,63}$")
@@ -69,13 +124,34 @@ def _timestamp(value: Any, name: str) -> None:
 def _actor(actor: Any, name: str) -> None:
     _object(actor, name, {"actor_type", "identifier"}, {"actor_type"})
     _enum(actor["actor_type"], ACTOR_TYPES, f"{name}.actor_type")
-    if "identifier" in actor and (not isinstance(actor["identifier"], str) or not actor["identifier"] or len(actor["identifier"]) > 128):
-        raise ValueError(f"{name}.identifier must be a non-empty string of at most 128 characters")
+    if "identifier" in actor and (
+        not isinstance(actor["identifier"], str)
+        or not actor["identifier"]
+        or len(actor["identifier"]) > 128
+    ):
+        raise ValueError(
+            f"{name}.identifier must be a non-empty string of at most 128 characters"
+        )
 
 
 def validate_record(record: Mapping[str, Any]) -> None:
     """Validate v1 metadata without reading or retaining the referenced payload."""
-    required = {"record_id", "record_type", "schema_version", "created_at", "creator", "origin", "purpose", "classification", "license", "retention_class", "content_ref", "review_state", "tags", "relationships"}
+    required = {
+        "record_id",
+        "record_type",
+        "schema_version",
+        "created_at",
+        "creator",
+        "origin",
+        "purpose",
+        "classification",
+        "license",
+        "retention_class",
+        "content_ref",
+        "review_state",
+        "tags",
+        "relationships",
+    }
     allowed = required | {"content_digest"}
     _object(record, "record", allowed, required)
     _uuid4(record["record_id"], "record_id")
@@ -88,17 +164,32 @@ def validate_record(record: Mapping[str, Any]) -> None:
     _object(origin, "origin", {"origin_type", "uri", "revision"}, {"origin_type"})
     _enum(origin["origin_type"], ORIGIN_TYPES, "origin.origin_type")
     for key, limit in (("uri", 2048), ("revision", 256)):
-        if key in origin and (not isinstance(origin[key], str) or not origin[key] or len(origin[key]) > limit):
+        if key in origin and (
+            not isinstance(origin[key], str)
+            or not origin[key]
+            or len(origin[key]) > limit
+        ):
             raise ValueError(f"origin.{key} must be a non-empty bounded string")
     _enum(record["purpose"], PURPOSES, "purpose")
     _enum(record["classification"], CLASSIFICATIONS, "classification")
     _enum(record["retention_class"], RETENTION_CLASSES, "retention_class")
     _enum(record["review_state"], REVIEW_STATES, "review_state")
-    if not isinstance(record["license"], str) or not record["license"] or len(record["license"]) > 128:
+    if (
+        not isinstance(record["license"], str)
+        or not record["license"]
+        or len(record["license"]) > 128
+    ):
         raise ValueError("license must be a non-empty SPDX identifier or NOASSERTION")
-    if not isinstance(record["content_ref"], str) or not record["content_ref"] or len(record["content_ref"]) > 2048:
+    if (
+        not isinstance(record["content_ref"], str)
+        or not record["content_ref"]
+        or len(record["content_ref"]) > 2048
+    ):
         raise ValueError("content_ref must be a non-empty bounded reference")
-    if "content_digest" in record and (not isinstance(record["content_digest"], str) or not _DIGEST_RE.fullmatch(record["content_digest"])):
+    if "content_digest" in record and (
+        not isinstance(record["content_digest"], str)
+        or not _DIGEST_RE.fullmatch(record["content_digest"])
+    ):
         raise ValueError("content_digest must be a sha256 digest")
     tags = record["tags"]
     if not isinstance(tags, list) or len(tags) > 32:
@@ -107,7 +198,12 @@ def validate_record(record: Mapping[str, Any]) -> None:
     for tag in tags:
         _object(tag, "tag", {"key", "value"}, {"key", "value"})
         key, value = tag["key"], tag["value"]
-        if not isinstance(key, str) or key not in TAG_VALUES or not isinstance(value, str) or value not in TAG_VALUES[key]:
+        if (
+            not isinstance(key, str)
+            or key not in TAG_VALUES
+            or not isinstance(value, str)
+            or value not in TAG_VALUES[key]
+        ):
             raise ValueError("tag key/value is not in the controlled vocabulary")
         if (key, value) in seen:
             raise ValueError("duplicate tag")
@@ -116,14 +212,30 @@ def validate_record(record: Mapping[str, Any]) -> None:
     if not isinstance(relationships, list) or len(relationships) > 64:
         raise ValueError("relationships must be a list of at most 64 entries")
     for item in relationships:
-        _object(item, "relationship", {"relationship_type", "target_record_id"}, {"relationship_type", "target_record_id"})
-        _enum(item["relationship_type"], RELATIONSHIP_TYPES, "relationship.relationship_type")
+        _object(
+            item,
+            "relationship",
+            {"relationship_type", "target_record_id"},
+            {"relationship_type", "target_record_id"},
+        )
+        _enum(
+            item["relationship_type"],
+            RELATIONSHIP_TYPES,
+            "relationship.relationship_type",
+        )
         _uuid4(item["target_record_id"], "target_record_id")
 
 
 def validate_lifecycle_event(event: Mapping[str, Any]) -> None:
     """Validate a payload-free lifecycle event."""
-    required = {"event_id", "record_id", "schema_version", "event_type", "occurred_at", "actor"}
+    required = {
+        "event_id",
+        "record_id",
+        "schema_version",
+        "event_type",
+        "occurred_at",
+        "actor",
+    }
     _object(event, "event", required | {"reason_code", "related_record_id"}, required)
     _uuid4(event["event_id"], "event_id")
     _uuid4(event["record_id"], "record_id")
@@ -132,20 +244,44 @@ def validate_lifecycle_event(event: Mapping[str, Any]) -> None:
     _enum(event["event_type"], EVENT_TYPES, "event_type")
     _timestamp(event["occurred_at"], "occurred_at")
     _actor(event["actor"], "actor")
-    if "reason_code" in event and (not isinstance(event["reason_code"], str) or not _REASON_RE.fullmatch(event["reason_code"])):
+    if "reason_code" in event and (
+        not isinstance(event["reason_code"], str)
+        or not _REASON_RE.fullmatch(event["reason_code"])
+    ):
         raise ValueError("reason_code must be a bounded machine-readable code")
     if "related_record_id" in event:
         _uuid4(event["related_record_id"], "related_record_id")
 
 
-def create_record(*, record_type: str, creator: Mapping[str, Any], origin: Mapping[str, Any], purpose: str, classification: str, retention_class: str, content_ref: str, license: str = "NOASSERTION", content_digest: str | None = None, review_state: str = "unreviewed", tags: list[Mapping[str, str]] | None = None, relationships: list[Mapping[str, str]] | None = None) -> dict[str, Any]:
+def create_record(
+    *,
+    record_type: str,
+    creator: Mapping[str, Any],
+    origin: Mapping[str, Any],
+    purpose: str,
+    classification: str,
+    retention_class: str,
+    content_ref: str,
+    license: str = "NOASSERTION",
+    content_digest: str | None = None,
+    review_state: str = "unreviewed",
+    tags: list[Mapping[str, str]] | None = None,
+    relationships: list[Mapping[str, str]] | None = None,
+) -> dict[str, Any]:
     """Create a validated metadata envelope with a random ID unrelated to personal data."""
     record: dict[str, Any] = {
-        "record_id": str(uuid4()), "record_type": record_type, "schema_version": SCHEMA_VERSION,
+        "record_id": str(uuid4()),
+        "record_type": record_type,
+        "schema_version": SCHEMA_VERSION,
         "created_at": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
-        "creator": dict(creator), "origin": dict(origin), "purpose": purpose,
-        "classification": classification, "license": license, "retention_class": retention_class,
-        "content_ref": content_ref, "review_state": review_state,
+        "creator": dict(creator),
+        "origin": dict(origin),
+        "purpose": purpose,
+        "classification": classification,
+        "license": license,
+        "retention_class": retention_class,
+        "content_ref": content_ref,
+        "review_state": review_state,
         "tags": [dict(tag) for tag in (tags or [])],
         "relationships": [dict(item) for item in (relationships or [])],
     }
@@ -155,10 +291,19 @@ def create_record(*, record_type: str, creator: Mapping[str, Any], origin: Mappi
     return record
 
 
-def create_lifecycle_event(*, record_id: str, event_type: str, actor: Mapping[str, Any], reason_code: str | None = None, related_record_id: str | None = None) -> dict[str, Any]:
+def create_lifecycle_event(
+    *,
+    record_id: str,
+    event_type: str,
+    actor: Mapping[str, Any],
+    reason_code: str | None = None,
+    related_record_id: str | None = None,
+) -> dict[str, Any]:
     """Create a validated metadata-only event; persistence is a separate layer."""
     event: dict[str, Any] = {
-        "event_id": str(uuid4()), "record_id": record_id, "schema_version": SCHEMA_VERSION,
+        "event_id": str(uuid4()),
+        "record_id": record_id,
+        "schema_version": SCHEMA_VERSION,
         "event_type": event_type,
         "occurred_at": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
         "actor": dict(actor),
@@ -169,4 +314,3 @@ def create_lifecycle_event(*, record_id: str, event_type: str, actor: Mapping[st
         event["related_record_id"] = related_record_id
     validate_lifecycle_event(event)
     return event
-

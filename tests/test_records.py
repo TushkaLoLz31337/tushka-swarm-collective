@@ -27,8 +27,12 @@ class GovernedRecordTests(unittest.TestCase):
         cls.event_schema = load_json(SPEC / "lifecycle-event.schema.json")
         Draft202012Validator.check_schema(cls.record_schema)
         Draft202012Validator.check_schema(cls.event_schema)
-        cls.record_validator = Draft202012Validator(cls.record_schema, format_checker=FormatChecker())
-        cls.event_validator = Draft202012Validator(cls.event_schema, format_checker=FormatChecker())
+        cls.record_validator = Draft202012Validator(
+            cls.record_schema, format_checker=FormatChecker()
+        )
+        cls.event_validator = Draft202012Validator(
+            cls.event_schema, format_checker=FormatChecker()
+        )
 
     def test_examples_validate_against_schema_and_runtime_contract(self):
         record = load_json(SPEC / "examples" / "record-public.json")
@@ -107,7 +111,12 @@ class GovernedRecordTests(unittest.TestCase):
 
     def test_lifecycle_factory_is_payload_free(self):
         record = load_json(SPEC / "examples" / "record-public.json")
-        event = create_lifecycle_event(record_id=record["record_id"], event_type="payload_deleted", actor={"actor_type": "service"}, reason_code="retention_expired")
+        event = create_lifecycle_event(
+            record_id=record["record_id"],
+            event_type="payload_deleted",
+            actor={"actor_type": "service"},
+            reason_code="retention_expired",
+        )
         self.event_validator.validate(event)
         validate_lifecycle_event(event)
         self.assertNotIn("payload", event)
