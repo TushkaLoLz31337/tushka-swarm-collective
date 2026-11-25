@@ -1,0 +1,23 @@
+{
+  "signature": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+  "body": {
+    "protocol": "OIX",
+    "version": "0.1",
+    "message_id": "4f3e2c5b-7d8e-4f90-a1b2-2d3e4f5a6b7c",
+    "sender": "ed25519:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "recipient": "ed25519:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "type": "task.result",
+    "issued_at": 1795520100,
+    "expires_at": 1795523700,
+    "nonce": "abcdef0123456789abcdef0123456789",
+    "requested_capability": "summarize",
+    "payload": {
+      "protocol_version": "1.0",
+      "message_type": "result",
+      "task_id": "tushka-task-001",
+      "agent_id": "local-summary",
+      "status": "succeeded",
+      "content": "- One\n- Two\n- Three"
+    }
+  }
+}
