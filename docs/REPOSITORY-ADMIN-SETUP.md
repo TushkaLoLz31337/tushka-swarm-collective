@@ -20,6 +20,13 @@ Open **Settings → Rules → Rulesets → New branch ruleset**.
 - Block branch deletion.
 - Do not allow bypass for routine contributors. If an administrator emergency bypass is retained, require a documented reason and follow-up review.
 
+### Bootstrap without leaving main unprotected
+
+Because the new quality/security workflows are introduced by PR #14, their check names may not be selectable in the ruleset until they have run on the default branch. Use a two-step rollout:
+
+1. **Before merging PR #14:** activate the ruleset with the pull-request requirement, one independent approval, stale-review dismissal, conversation resolution, force-push/deletion blocks, and the currently existing `test` check (if GitHub offers it). Enable the dependency graph so PR #14's Dependency review check can pass. Do not merge PR #14 without its independent approval and all available checks passing.
+2. **Immediately after PR #14 merges:** edit the ruleset and replace the transitional `test` requirement with the four checks listed below. Confirm each has reported on the default branch and is selectable. Keep the review and force-push/deletion rules active throughout.
+
 Add these required checks after the workflows are present on the default branch and the dependency graph has been enabled:
 
 | Workflow / job | Why it is required |
