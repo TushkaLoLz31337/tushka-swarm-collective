@@ -61,3 +61,8 @@ Before adding networking, define stable contracts for:
 - adapter configuration and secret handling.
 
 Avoid prematurely choosing a single message broker, vector database, model provider, or orchestration framework.
+
+
+## Companion project interoperability
+
+The target architecture is documented in [Autonomous Swarm Specification v1](AUTONOMOUS-SWARM-SPECIFICATION-v1.md). Tushka will evaluate existing local-first components through adapters rather than duplicate their functionality. See the [Ecosystem Integration Register](ECOSYSTEM-INTEGRATION-REGISTER.md) for source ownership, licenses, maturity boundaries, and the distinction between reference, candidate, and integrated projects. No companion project is part of the Tushka runtime merely because it is listed there.
