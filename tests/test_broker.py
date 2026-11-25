@@ -238,6 +238,37 @@ class LocalBrokerTests(unittest.IsolatedAsyncioTestCase):
         finally:
             await broker.close()
 
+    async def test_history_pruning_preserves_cancelled_items_still_in_queue(self):
+        gate = asyncio.Event()
+        worker = StubWorker("worker", gate=gate)
+        broker = LocalBroker(
+            [WorkerRegistration(worker)],
+            max_queued_tasks=2,
+            max_record_history=2,
+        )
+        await broker.start()
+        try:
+            broker.submit(Task("task-active", "first"))
+            await worker.started.wait()
+            broker.submit(Task("task-cancelled-pending", "second"))
+            self.assertTrue(broker.cancel("task-cancelled-pending"))
+
+            deferred = broker.submit(Task("task-not-yet-admitted", "third"))
+            self.assertEqual(deferred.status, AdmissionStatus.DEFERRED)
+            self.assertEqual(deferred.reason, "record_history_capacity")
+
+            gate.set()
+            await broker.wait("task-active")
+            await broker.wait("task-cancelled-pending")
+
+            accepted = broker.submit(Task("task-not-yet-admitted", "third"))
+            self.assertEqual(accepted.status, AdmissionStatus.ACCEPTED)
+            result = await broker.wait("task-not-yet-admitted")
+            self.assertEqual(result.state, TaskState.SUCCEEDED)
+        finally:
+            gate.set()
+            await broker.close()
+
     async def test_close_cancels_running_work(self):
         gate = asyncio.Event()
         worker = StubWorker("worker", gate=gate)
