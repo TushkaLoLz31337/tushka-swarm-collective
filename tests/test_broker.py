@@ -1,6 +1,6 @@
 import asyncio
 import unittest
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from tushka.broker import (
     AdmissionStatus,
@@ -178,7 +178,7 @@ class LocalBrokerTests(unittest.IsolatedAsyncioTestCase):
             )
             expired = broker.submit(
                 Task("task-expired", "work"),
-                deadline_at=datetime.now(timezone.utc) - timedelta(seconds=1),
+                deadline_at=datetime.now(UTC) - timedelta(seconds=1),
             )
             self.assertEqual(naive.reason, "deadline_must_be_timezone_aware")
             self.assertEqual(expired.reason, "deadline_expired")
