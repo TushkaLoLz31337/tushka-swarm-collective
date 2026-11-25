@@ -9,7 +9,9 @@ This checklist is a hard gate for every release candidate. A tag must point to t
 - [ ] Ensure main is protected with required independent review and required CI/security checks, including dependency review.
 - [ ] Run Ruff lint and format checks.
 - [ ] Run the complete unit and demo test suite.
-- [ ] Run Bandit and CodeQL security analysis.\n- [ ] Confirm GitHub secret scanning is active and review open alerts.\n- [ ] Confirm dependency review passes and Dependabot alerts are triaged.
+- [ ] Run Bandit and CodeQL security analysis.
+- [ ] Confirm GitHub secret scanning is active and review open alerts.
+- [ ] Confirm dependency review passes and Dependabot alerts are triaged.
 - [ ] Run pip-audit against pinned CI and test dependencies.
 - [ ] Build both source distribution and wheel.
 - [ ] Install the wheel in an isolated target and run the demo.
