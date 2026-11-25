@@ -57,7 +57,10 @@ class WorkerRegistration:
     max_concurrency: int = 1
 
     def __post_init__(self) -> None:
-        if not isinstance(getattr(self.agent, "name", None), str) or not self.agent.name.strip():
+        if (
+            not isinstance(getattr(self.agent, "name", None), str)
+            or not self.agent.name.strip()
+        ):
             raise ValueError("Worker agent must have a non-empty name.")
         if not callable(getattr(self.agent, "run", None)):
             raise TypeError("Worker agent must provide an async run method.")
@@ -76,7 +79,9 @@ class WorkerRegistration:
             or self.max_concurrency < 1
         ):
             raise ValueError("max_concurrency must be a positive integer.")
-        if any(not isinstance(item, str) or not item.strip() for item in self.capabilities):
+        if any(
+            not isinstance(item, str) or not item.strip() for item in self.capabilities
+        ):
             raise ValueError("Worker capabilities must be non-empty strings.")
 
 
@@ -254,7 +259,9 @@ class LocalBroker:
                 )
             if deadline_at.tzinfo is None or deadline_at.utcoffset() is None:
                 return AdmissionResult(
-                    AdmissionStatus.REJECTED, task.task_id, "deadline_must_be_timezone_aware"
+                    AdmissionStatus.REJECTED,
+                    task.task_id,
+                    "deadline_must_be_timezone_aware",
                 )
             if deadline_at <= _now():
                 return AdmissionResult(
@@ -288,9 +295,7 @@ class LocalBroker:
             )
 
         eligible = [
-            worker
-            for worker in self._workers
-            if required.issubset(worker.capabilities)
+            worker for worker in self._workers if required.issubset(worker.capabilities)
         ]
         if not eligible:
             return AdmissionResult(
@@ -367,7 +372,9 @@ class LocalBroker:
         self._closed = True
         for record in self._records.values():
             if record.state not in _TERMINAL_STATES:
-                self._transition(record, TaskState.CANCELLED, error_code="broker_closed")
+                self._transition(
+                    record, TaskState.CANCELLED, error_code="broker_closed"
+                )
                 execution = self._execution_tasks.get(record.task.task_id)
                 if execution is not None:
                     execution.cancel()
@@ -411,61 +418,57 @@ class LocalBroker:
             self._worker_semaphores[registration.agent.name],
             self._node_semaphores[registration.node_id],
         ):
-                if record.state in _TERMINAL_STATES:
-                    return
-                if record.deadline_at is not None and record.deadline_at <= _now():
-                    self._transition(
-                        record, TaskState.EXPIRED, error_code="deadline_expired"
-                    )
-                    return
+            if record.state in _TERMINAL_STATES:
+                return
+            if record.deadline_at is not None and record.deadline_at <= _now():
                 self._transition(
-                    record, TaskState.ASSIGNED, worker_name=registration.agent.name
+                    record, TaskState.EXPIRED, error_code="deadline_expired"
                 )
+                return
+            self._transition(
+                record, TaskState.ASSIGNED, worker_name=registration.agent.name
+            )
+            self._transition(
+                record, TaskState.RUNNING, worker_name=registration.agent.name
+            )
+            try:
+                if record.deadline_at is None:
+                    result = await registration.agent.run(record.task)
+                else:
+                    timeout = max(0.0, (record.deadline_at - _now()).total_seconds())
+                    result = await asyncio.wait_for(
+                        registration.agent.run(record.task), timeout=timeout
+                    )
+                if not isinstance(result, AgentResult):
+                    self._transition(
+                        record, TaskState.FAILED, error_code="invalid_worker_result"
+                    )
+                elif result.agent_name != registration.agent.name:
+                    self._transition(
+                        record, TaskState.FAILED, error_code="worker_identity_mismatch"
+                    )
+                elif not result.success:
+                    record.result = AgentResult(
+                        registration.agent.name, "", success=False
+                    )
+                    self._transition(
+                        record, TaskState.FAILED, error_code="worker_failed"
+                    )
+                else:
+                    record.result = result
+                    self._transition(record, TaskState.SUCCEEDED)
+            except TimeoutError:
                 self._transition(
-                    record, TaskState.RUNNING, worker_name=registration.agent.name
+                    record, TaskState.EXPIRED, error_code="deadline_expired"
                 )
-                try:
-                    if record.deadline_at is None:
-                        result = await registration.agent.run(record.task)
-                    else:
-                        timeout = max(
-                            0.0, (record.deadline_at - _now()).total_seconds()
-                        )
-                        result = await asyncio.wait_for(
-                            registration.agent.run(record.task), timeout=timeout
-                        )
-                    if not isinstance(result, AgentResult):
-                        self._transition(
-                            record, TaskState.FAILED, error_code="invalid_worker_result"
-                        )
-                    elif result.agent_name != registration.agent.name:
-                        self._transition(
-                            record, TaskState.FAILED, error_code="worker_identity_mismatch"
-                        )
-                    elif not result.success:
-                        record.result = AgentResult(
-                            registration.agent.name, "", success=False
-                        )
-                        self._transition(
-                            record, TaskState.FAILED, error_code="worker_failed"
-                        )
-                    else:
-                        record.result = result
-                        self._transition(record, TaskState.SUCCEEDED)
-                except TimeoutError:
+            except asyncio.CancelledError:
+                if record.state not in _TERMINAL_STATES:
                     self._transition(
-                        record, TaskState.EXPIRED, error_code="deadline_expired"
+                        record, TaskState.CANCELLED, error_code="cancelled"
                     )
-                except asyncio.CancelledError:
-                    if record.state not in _TERMINAL_STATES:
-                        self._transition(
-                            record, TaskState.CANCELLED, error_code="cancelled"
-                        )
-                    raise
-                except Exception:  # noqa: BLE001 - expose only a stable worker error code
-                    self._transition(
-                        record, TaskState.FAILED, error_code="worker_error"
-                    )
+                raise
+            except Exception:  # noqa: BLE001 - expose only a stable worker error code
+                self._transition(record, TaskState.FAILED, error_code="worker_error")
 
     def _select_worker(
         self, eligible: Sequence[WorkerRegistration]
@@ -491,7 +494,8 @@ class LocalBroker:
                 (
                     task_id
                     for task_id, record in self._records.items()
-                    if record.state in _TERMINAL_STATES and task_id not in self._queued_ids
+                    if record.state in _TERMINAL_STATES
+                    and task_id not in self._queued_ids
                 ),
                 None,
             )
