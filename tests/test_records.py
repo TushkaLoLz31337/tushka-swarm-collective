@@ -72,6 +72,24 @@ class GovernedRecordTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "UUIDv4"):
             validate_record(record)
 
+    def test_all_relationship_and_event_record_ids_require_uuid4(self):
+        record = load_json(SPEC / "examples" / "record-public.json")
+        record["relationships"] = [
+            {
+                "relationship_type": "cites",
+                "target_record_id": "00000000-0000-0000-0000-000000000000",
+            }
+        ]
+        self.assertFalse(self.record_validator.is_valid(record))
+        with self.assertRaisesRegex(ValueError, "UUIDv4"):
+            validate_record(record)
+
+        event = load_json(SPEC / "examples" / "lifecycle-created.json")
+        event["record_id"] = "00000000-0000-0000-0000-000000000000"
+        self.assertFalse(self.event_validator.is_valid(event))
+        with self.assertRaisesRegex(ValueError, "UUIDv4"):
+            validate_lifecycle_event(event)
+
     def test_payload_and_free_text_event_reason_are_rejected(self):
         record = load_json(SPEC / "examples" / "record-public.json")
         record["payload"] = "not metadata"
