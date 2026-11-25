@@ -53,7 +53,7 @@ Open **Settings → Security and analysis** and verify the following for this pu
 - Enable repository push protection where the repository's available plan/settings permit it; user-level push protection is not a substitute for checking repository-level alert configuration.
 - Keep CodeQL code scanning enabled and review alerts rather than treating a green workflow as proof that no vulnerabilities exist.
 - Enable private vulnerability reporting so researchers can report findings without publishing exploit details.
-- Review GitHub Actions permissions and restrict third-party actions to trusted publishers; pin actions to full commit SHAs as a follow-up hardening task.
+- Review GitHub Actions permissions and restrict third-party actions to trusted publishers. The release, CodeQL, and dependency-review workflows in this PR pin their actions to full commit SHAs; keep those pins current through Dependabot and review every update.
 
 The CI workflow now includes a Dependency Review check for pull requests and Dependabot configuration for weekly pip and GitHub Actions updates. These checks do not replace the repository's security settings or a human review of dependency changes.
 
