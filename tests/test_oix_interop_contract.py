@@ -4,6 +4,7 @@ import unittest
 from pathlib import Path
 
 from jsonschema import Draft202012Validator
+from jsonschema.exceptions import ValidationError
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = ROOT / "spec" / "v1"
@@ -57,6 +58,7 @@ class OIXInteropContractTests(unittest.TestCase):
         self.assertGreaterEqual(len(body["recipient"]), 1)
         self.assertLessEqual(len(body["recipient"]), 256)
         self.assertIsInstance(body["message_id"], str)
+        self.assertRegex(body["message_id"], re.compile(r"^[0-9a-fA-F-]{36}$"))
         self.assertIsInstance(body["issued_at"], int)
         self.assertIsInstance(body["expires_at"], int)
         self.assertGreater(body["expires_at"], body["issued_at"])
@@ -65,6 +67,7 @@ class OIXInteropContractTests(unittest.TestCase):
         self.assertLessEqual(len(body["nonce"]), 128)
         self.assertIsInstance(body["requested_capability"], str)
         self.assertTrue(body["requested_capability"])
+        self.assertLessEqual(len(body["requested_capability"]), 128)
         self.assertIsInstance(body["payload"], dict)
         return body
 
@@ -90,7 +93,7 @@ class OIXInteropContractTests(unittest.TestCase):
         envelope = load_json(FIXTURES / "oix-task-request.json")
         envelope["body"]["payload"]["capability"] = "summarize"
         body = self.validate_oix_wrapper_shape(envelope, "task.request")
-        with self.assertRaises(Exception):
+        with self.assertRaises(ValidationError):
             self.task_validator.validate(body["payload"])
 
 
