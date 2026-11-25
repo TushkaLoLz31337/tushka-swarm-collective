@@ -22,7 +22,7 @@ This checklist is a hard gate for every release candidate. A tag must point to t
 
 ## Tag and publish
 
-- [ ] Create the tag from the verified main commit only. The release workflow independently verifies that the tagged commit is an ancestor of `main` and that the tag matches the package version.
+- [ ] Create the tag from the verified main commit only. The release workflow independently verifies that the tagged commit equals the exact current `main` commit and that the tag matches the package version.
 - [ ] Confirm the tag-triggered workflow passes all required jobs.
 - [ ] Confirm the GitHub prerelease contains the wheel, source archive, and SHA256SUMS.
 - [ ] Verify downloaded checksums against the published assets.
