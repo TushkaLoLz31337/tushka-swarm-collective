@@ -20,13 +20,13 @@ Open **Settings → Rules → Rulesets → New branch ruleset**.
 - Block branch deletion.
 - Do not allow bypass for routine contributors. If an administrator emergency bypass is retained, require a documented reason and follow-up review.
 
-Add these required checks after the workflows are present on the default branch:
+Add these required checks after the workflows are present on the default branch and the dependency graph has been enabled:
 
 | Workflow / job | Why it is required |
 |---|---|
 | `Quality and package / quality` | Ruff lint/format, Bandit, pip-audit, unit tests, demo smoke test |
 | `Quality and package / package` | source/wheel build, isolated install smoke test, checksummed artifacts |
-| `Analyze Python` | CodeQL security-extended analysis |
+| `Analyze Python` | CodeQL security-extended analysis |\n| `Dependency review` | Reject pull requests introducing dependencies with known high-severity vulnerabilities |
 
 GitHub may show check names only after each workflow has reported at least once on the default branch. Select the exact names displayed in the ruleset UI.
 
