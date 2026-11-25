@@ -59,6 +59,15 @@ class WorkerRegistration:
     def __post_init__(self) -> None:
         if not isinstance(getattr(self.agent, "name", None), str) or not self.agent.name.strip():
             raise ValueError("Worker agent must have a non-empty name.")
+        if not callable(getattr(self.agent, "run", None)):
+            raise ValueError("Worker agent must provide an async run method.")
+        if isinstance(self.capabilities, str):
+            raise ValueError("capabilities must be a collection of capability names.")
+        try:
+            normalized_capabilities = frozenset(self.capabilities)
+        except TypeError as exc:
+            raise ValueError("capabilities must be an iterable of strings.") from exc
+        object.__setattr__(self, "capabilities", normalized_capabilities)
         if not isinstance(self.node_id, str) or not self.node_id.strip():
             raise ValueError("node_id must be a non-empty string.")
         if (
@@ -151,7 +160,12 @@ class LocalBroker:
         ):
             if not isinstance(value, int) or isinstance(value, bool) or value < 1:
                 raise ValueError(f"{name} must be a positive integer.")
-        if not math.isfinite(retry_after_seconds) or retry_after_seconds <= 0:
+        if (
+            not isinstance(retry_after_seconds, (int, float))
+            or isinstance(retry_after_seconds, bool)
+            or not math.isfinite(retry_after_seconds)
+            or retry_after_seconds <= 0
+        ):
             raise ValueError("retry_after_seconds must be finite and positive.")
 
         self._workers = tuple(workers)
@@ -212,7 +226,16 @@ class LocalBroker:
                 AdmissionStatus.REJECTED, task.task_id, "broker_not_running"
             )
 
-        required = frozenset(required_capabilities)
+        if isinstance(required_capabilities, str):
+            return AdmissionResult(
+                AdmissionStatus.REJECTED, task.task_id, "invalid_capability"
+            )
+        try:
+            required = frozenset(required_capabilities)
+        except TypeError:
+            return AdmissionResult(
+                AdmissionStatus.REJECTED, task.task_id, "invalid_capability"
+            )
         if any(not isinstance(item, str) or not item.strip() for item in required):
             return AdmissionResult(
                 AdmissionStatus.REJECTED, task.task_id, "invalid_capability"
@@ -224,6 +247,10 @@ class LocalBroker:
                 AdmissionStatus.REJECTED, task.task_id, "invalid_idempotency_key"
             )
         if deadline_at is not None:
+            if not isinstance(deadline_at, datetime):
+                return AdmissionResult(
+                    AdmissionStatus.REJECTED, task.task_id, "invalid_deadline"
+                )
             if deadline_at.tzinfo is None or deadline_at.utcoffset() is None:
                 return AdmissionResult(
                     AdmissionStatus.REJECTED, task.task_id, "deadline_must_be_timezone_aware"
