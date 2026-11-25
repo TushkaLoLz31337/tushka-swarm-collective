@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import re
-from datetime import datetime, timezone
-from typing import Any, Mapping
+from collections.abc import Mapping
+from datetime import UTC, datetime
+from typing import Any
 from uuid import UUID, uuid4
 
 SCHEMA_VERSION = "1.0"
@@ -30,7 +31,7 @@ _REASON_RE = re.compile(r"^[a-z][a-z0-9_]{0,63}$")
 
 def _object(value: Any, name: str, allowed: set[str], required: set[str]) -> None:
     if not isinstance(value, Mapping):
-        raise ValueError(f"{name} must be an object")
+        raise TypeError(f"{name} must be an object")
     keys = set(value)
     if keys - allowed:
         raise ValueError(f"{name} contains unsupported fields")
@@ -45,7 +46,7 @@ def _enum(value: Any, choices: frozenset[str], name: str) -> None:
 
 def _uuid4(value: Any, name: str) -> None:
     if not isinstance(value, str):
-        raise ValueError(f"{name} must be a UUID string")
+        raise TypeError(f"{name} must be a UUID string")
     try:
         parsed = UUID(value)
     except (ValueError, AttributeError):
@@ -56,9 +57,9 @@ def _uuid4(value: Any, name: str) -> None:
 
 def _timestamp(value: Any, name: str) -> None:
     if not isinstance(value, str):
-        raise ValueError(f"{name} must be an ISO-8601 timestamp")
+        raise TypeError(f"{name} must be an ISO-8601 timestamp")
     try:
-        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        parsed = datetime.fromisoformat(value)
     except ValueError:
         raise ValueError(f"{name} must be an ISO-8601 timestamp") from None
     if parsed.tzinfo is None or parsed.utcoffset() is None:
@@ -141,7 +142,7 @@ def create_record(*, record_type: str, creator: Mapping[str, Any], origin: Mappi
     """Create a validated metadata envelope with a random ID unrelated to personal data."""
     record: dict[str, Any] = {
         "record_id": str(uuid4()), "record_type": record_type, "schema_version": SCHEMA_VERSION,
-        "created_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "created_at": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
         "creator": dict(creator), "origin": dict(origin), "purpose": purpose,
         "classification": classification, "license": license, "retention_class": retention_class,
         "content_ref": content_ref, "review_state": review_state,
