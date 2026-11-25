@@ -26,7 +26,8 @@ Add these required checks after the workflows are present on the default branch 
 |---|---|
 | `quality` | Ruff lint/format, Bandit, pip-audit, unit tests, demo smoke test |
 | `package` | source/wheel build, isolated install smoke test, checksummed artifacts |
-| `Analyze Python` | CodeQL security-extended analysis |\n| `Dependency review` | Reject pull requests introducing dependencies with known high-severity vulnerabilities |
+| `Analyze Python` | CodeQL security-extended analysis |
+| `Dependency review` | Reject pull requests introducing dependencies with known high-severity vulnerabilities |
 
 GitHub may show check names only after each workflow has reported at least once on the default branch. Select the exact names displayed in the ruleset UI.
 
@@ -75,6 +76,7 @@ After applying settings, record in the shared checkpoint:
 - required check names, including `Dependency review`;
 - approval count and conversation-resolution setting;
 - reviewer accounts and permission levels;
-- date applied and owner confirmation;\n- dependency graph, Dependabot alerts/security updates, secret scanning, push protection, and private vulnerability reporting status.
+- date applied and owner confirmation;
+- dependency graph, Dependabot alerts/security updates, secret scanning, push protection, and private vulnerability reporting status.
 
 A ruleset is not considered active merely because this document exists. Verify the ruleset in GitHub Settings and test it with a non-admin PR before claiming `main` is protected.
