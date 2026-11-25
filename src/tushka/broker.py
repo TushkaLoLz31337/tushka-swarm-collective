@@ -394,7 +394,9 @@ class LocalBroker:
                                     record, TaskState.FAILED, error_code="worker_identity_mismatch"
                                 )
                             elif not result.success:
-                                record.result = result
+                                record.result = AgentResult(
+                                    registration.agent.name, "", success=False
+                                )
                                 self._transition(
                                     record, TaskState.FAILED, error_code="worker_failed"
                                 )
