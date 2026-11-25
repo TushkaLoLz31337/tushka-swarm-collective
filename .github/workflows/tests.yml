@@ -103,6 +103,9 @@ jobs:
         with:
           name: tushka-distributions
           path: release-assets
+      - name: Verify downloaded SHA-256 checksums
+        working-directory: release-assets
+        run: sha256sum --check SHA256SUMS
       - name: Publish GitHub prerelease and attach artifacts
         env:
           GH_TOKEN: ${{ github.token }}
