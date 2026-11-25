@@ -76,7 +76,9 @@ class WorkerRegistration:
             or not self.node_id.strip()
             or len(self.node_id) > 128
         ):
-            raise ValueError("node_id must be a non-empty string of at most 128 characters.")
+            raise ValueError(
+                "node_id must be a non-empty string of at most 128 characters."
+            )
         if (
             not isinstance(self.max_concurrency, int)
             or isinstance(self.max_concurrency, bool)
@@ -84,9 +86,7 @@ class WorkerRegistration:
         ):
             raise ValueError("max_concurrency must be a positive integer.")
         if len(self.capabilities) > 32 or any(
-            not isinstance(item, str)
-            or not item.strip()
-            or len(item) > 64
+            not isinstance(item, str) or not item.strip() or len(item) > 64
             for item in self.capabilities
         ):
             raise ValueError("Worker capabilities must be bounded non-empty strings.")
@@ -270,9 +270,7 @@ class LocalBroker:
                 AdmissionStatus.REJECTED, task.task_id, "invalid_capability"
             )
         if len(required) > 32 or any(
-            not isinstance(item, str)
-            or not item.strip()
-            or len(item) > 64
+            not isinstance(item, str) or not item.strip() or len(item) > 64
             for item in required
         ):
             return AdmissionResult(
