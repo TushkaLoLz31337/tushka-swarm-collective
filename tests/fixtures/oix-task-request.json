@@ -1,0 +1,21 @@
+{
+  "signature": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+  "body": {
+    "protocol": "OIX",
+    "version": "0.1",
+    "message_id": "3e2f1b4a-6c7d-4e8f-9a0b-1c2d3e4f5a6b",
+    "sender": "ed25519:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "recipient": "ed25519:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "type": "task.request",
+    "issued_at": 1795520000,
+    "expires_at": 1795523600,
+    "nonce": "0123456789abcdef0123456789abcdef",
+    "requested_capability": "summarize",
+    "payload": {
+      "protocol_version": "1.0",
+      "message_type": "task",
+      "task_id": "tushka-task-001",
+      "prompt": "Summarize the public README in three bullets."
+    }
+  }
+}
