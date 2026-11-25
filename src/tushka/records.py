@@ -160,7 +160,7 @@ def create_lifecycle_event(*, record_id: str, event_type: str, actor: Mapping[st
     event: dict[str, Any] = {
         "event_id": str(uuid4()), "record_id": record_id, "schema_version": SCHEMA_VERSION,
         "event_type": event_type,
-        "occurred_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "occurred_at": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
         "actor": dict(actor),
     }
     if reason_code is not None:
